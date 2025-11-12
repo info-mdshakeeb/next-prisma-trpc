@@ -13,7 +13,7 @@ export const env = createEnv({
    * Must be prefixed with NEXT_PUBLIC_
    */
   client: {
-    // NEXT_PUBLIC_: z.string()
+    NEXT_PUBLIC_APP_URL: z.string()
   },
 
   /**
@@ -23,7 +23,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
 
     // Client
-    // NEXT_PUBLIC_: process.env.NEXT_PUBLIC_,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 
   },
 
