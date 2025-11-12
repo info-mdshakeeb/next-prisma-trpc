@@ -5,6 +5,7 @@ import { META_THEME_COLORS, siteConfig } from "@/lib/config";
 import { fontVariables } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
+import Providers from "@/components/providers";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -83,7 +84,7 @@ export default function RootLayout({
           fontVariables
         )}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
