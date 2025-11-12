@@ -1,0 +1,250 @@
+import { ImageResponse } from "next/og";
+
+async function loadAssets(): Promise<
+  { name: string; data: Buffer; weight: 400 | 600; style: "normal" }[]
+> {
+  const [
+    { base64Font: normal },
+    { base64Font: mono },
+    { base64Font: semibold },
+  ] = await Promise.all([
+    import("./geist-regular-otf.json").then((mod) => mod.default || mod),
+    import("./geistmono-regular-otf.json").then((mod) => mod.default || mod),
+    import("./geist-semibold-otf.json").then((mod) => mod.default || mod),
+  ]);
+
+  return [
+    {
+      name: "Geist",
+      data: Buffer.from(normal, "base64"),
+      weight: 400 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "Geist Mono",
+      data: Buffer.from(mono, "base64"),
+      weight: 400 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "Geist",
+      data: Buffer.from(semibold, "base64"),
+      weight: 600 as const,
+      style: "normal" as const,
+    },
+  ];
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const title = searchParams.get("title");
+  const description = searchParams.get("description");
+
+  const [fonts] = await Promise.all([loadAssets()]);
+
+  return new ImageResponse(
+    (
+      <div
+        tw="flex h-full w-full bg-black text-white"
+        style={{ fontFamily: "Geist Sans" }}
+      >
+        <div tw="flex border absolute border-stone-700 border-dashed inset-y-0 left-16 w-[1px]" />
+        <div tw="flex border absolute border-stone-700 border-dashed inset-y-0 right-16 w-[1px]" />
+        <div tw="flex border absolute border-stone-700 inset-x-0 h-[1px] top-16" />
+        <div tw="flex border absolute border-stone-700 inset-x-0 h-[1px] bottom-16" />
+        <div tw="flex absolute flex-row bottom-24 right-24 text-white">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            version="1.0"
+            viewBox="0 0 375 374.999991"
+            width={48}
+            height={48}
+          >
+            <defs>
+              <clipPath id="d5dae3eaf6">
+                <path
+                  d="M 9 92 L 284 92 L 284 367 L 9 367 Z M 9 92 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="c919d3bb22">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="e6764ad57b">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="d89bfe6f6b">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="51147463ee">
+                <path
+                  d="M 9 92 L 80 92 L 80 367 L 9 367 Z M 9 92 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="612d249f4f">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="287751f571">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="85a88e4923">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="28af9eddc3">
+                <path
+                  d="M 296 8 L 368 8 L 368 283 L 296 283 Z M 296 8 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="3f45c01d72">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="d7bd9f5f69">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="7b0cb3d72d">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="97e932ff7f">
+                <path
+                  d="M 92 8 L 368 8 L 368 283 L 92 283 Z M 92 8 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="cb314ac215">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="084771be65">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+              <clipPath id="ff9b85ada5">
+                <path
+                  d="M 229.65625 -129.027344 L 504.367188 145.683594 L 146.394531 503.65625 L -128.316406 228.945312 Z M 229.65625 -129.027344 "
+                  clip-rule="nonzero"
+                />
+              </clipPath>
+            </defs>
+            <g clip-path="url(#d5dae3eaf6)">
+              <g clip-path="url(#c919d3bb22)">
+                <g clip-path="url(#e6764ad57b)">
+                  <g clip-path="url(#d89bfe6f6b)">
+                    <path
+                      fill="#7b7979"
+                      d="M 283.332031 92.003906 L 236.230469 139.109375 L 236.21875 319.175781 L 126.542969 319.1875 L 56.140625 319.199219 L 9.035156 366.300781 L 283.320312 366.285156 L 283.320312 297.21875 L 283.332031 92.003906 "
+                      fill-opacity="1"
+                      fill-rule="nonzero"
+                    />
+                  </g>
+                </g>
+              </g>
+            </g>
+            <g clip-path="url(#51147463ee)">
+              <g clip-path="url(#612d249f4f)">
+                <g clip-path="url(#287751f571)">
+                  <g clip-path="url(#85a88e4923)">
+                    <path
+                      fill="#444142"
+                      d="M 56.140625 248.785156 L 56.152344 139.117188 L 79.28125 139.113281 L 79.28125 92.019531 L 78.125 92.015625 L 78.121094 92.019531 L 9.054688 92.019531 L 9.035156 366.300781 L 56.140625 319.199219 L 56.140625 248.785156 "
+                      fill-opacity="1"
+                      fill-rule="nonzero"
+                    />
+                  </g>
+                </g>
+              </g>
+            </g>
+            <g clip-path="url(#28af9eddc3)">
+              <g clip-path="url(#3f45c01d72)">
+                <g clip-path="url(#d7bd9f5f69)">
+                  <g clip-path="url(#7b0cb3d72d)">
+                    <path
+                      fill="#ed1c24"
+                      d="M 319.894531 125.808594 L 319.886719 235.507812 L 296.769531 235.511719 L 296.765625 282.609375 L 297.925781 282.613281 L 366.996094 282.609375 L 367.011719 8.324219 L 319.898438 55.441406 L 319.894531 125.808594 "
+                      fill-opacity="1"
+                      fill-rule="nonzero"
+                    />
+                  </g>
+                </g>
+              </g>
+            </g>
+            <g clip-path="url(#97e932ff7f)">
+              <g clip-path="url(#cb314ac215)">
+                <g clip-path="url(#084771be65)">
+                  <g clip-path="url(#ff9b85ada5)">
+                    <path
+                      fill="#ac1929"
+                      d="M 139.828125 55.441406 L 319.894531 55.429688 L 319.898438 55.441406 L 367.011719 8.324219 L 92.730469 8.34375 L 92.726562 77.414062 L 92.714844 282.621094 L 139.820312 235.519531 L 139.828125 55.441406 "
+                      fill-opacity="1"
+                      fill-rule="nonzero"
+                    />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div tw="flex flex-col absolute w-[896px] justify-center inset-32">
+          <div
+            tw="tracking-tight flex-grow-1 flex flex-col justify-center leading-[1.1]"
+            style={{
+              textWrap: "balance",
+              fontWeight: 600,
+              fontSize: title && title.length > 20 ? 64 : 80,
+              letterSpacing: "-0.04em",
+            }}
+          >
+            {title}
+          </div>
+          <div
+            tw="text-[40px] leading-[1.5] flex-grow-1 text-stone-400"
+            style={{
+              fontWeight: 500,
+              textWrap: "balance",
+            }}
+          >
+            {description}
+          </div>
+        </div>
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 628,
+      fonts,
+    }
+  );
+}
