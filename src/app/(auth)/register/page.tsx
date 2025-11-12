@@ -4,6 +4,7 @@ import Link from "next/link";
 import Logo from "@/components/layout/core/logo";
 import { FieldDescription } from "@/components/ui/field";
 import { RegisterForm } from "@/features/auth/forms/register.form";
+import { requireUnAuth } from "@/lib/auth-utils";
 
 export const metadata: Metadata = {
   title: "Register",
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function page() {
+  await requireUnAuth();
+
   return (
     <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="w-full max-w-sm flex flex-col gap-4">
