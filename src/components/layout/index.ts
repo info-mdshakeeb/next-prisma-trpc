@@ -3,11 +3,11 @@
 export { Main } from "./core/main";
 export { Wrapper } from "./core/wrapper";
 
-
 export * from "./contexts/dashboard/app-sidebar";
 export * from "./contexts/dashboard/header";
 export * from "./contexts/dashboard/nav-main";
-
 export * from "./contexts/dashboard/nav-secondary";
-export * from "./core/nav-user";
+export * from "./contexts/dashboard/profile-dropdown";
+export * from "./contexts/dashboard/search";
+
 

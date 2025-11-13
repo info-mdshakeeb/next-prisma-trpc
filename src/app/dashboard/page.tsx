@@ -4,9 +4,11 @@ import {
   HeaderContent,
   HeaderSidebarTrigger,
   Main,
-  NavUser,
+  ProfileDropdown,
+  Search,
   Wrapper,
 } from "@/components/layout";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,11 +20,10 @@ import {
 
 export default function Page() {
   return (
-    <Wrapper>
-      <Header fixed>
-        <HeaderSidebarTrigger showSeparator />
-
+    <Wrapper fixed>
+      <Header className="border-b-0!">
         <HeaderContent>
+          <HeaderSidebarTrigger showSeparator />
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
@@ -39,19 +40,17 @@ export default function Page() {
         </HeaderContent>
 
         <HeaderActions>
-          <NavUser />
+          <Search className="" />
+          <ProfileDropdown />
         </HeaderActions>
       </Header>
 
       <Main className="">
         <div className="h-screen">
-          <div className="flex w-full justify-between">asdasdasdas</div>
+          <div className="flex w-full justify-between"></div>
         </div>
         <div className="h-screen">
-          <div className="flex w-full justify-between">
-            asdasdasdas
-            <span>asdasdas</span>
-          </div>
+          <div className="flex w-full justify-between"></div>
         </div>
       </Main>
     </Wrapper>

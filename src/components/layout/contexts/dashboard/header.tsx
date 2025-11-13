@@ -13,8 +13,10 @@ export function Header({
     <header
       data-layout-header={fixed ? "fixed" : "auto"}
       className={cn(
-        "z-50 h-16 border-b bg-background",
-        fixed && "sticky top-0",
+        "z-50 h-16  bg-background ",
+        "rounded-t-xl group-data-[layout=fixed]/layout:border-b",
+
+        fixed && "sticky top-0 border-b",
         className
       )}
       {...props}
@@ -30,11 +32,9 @@ export function HeaderSidebarTrigger({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & { showSeparator?: boolean }) {
   return (
-    <div className={cn("flex items-center gap-2", className)} {...props}>
-      <SidebarTrigger variant="outline" className="max-md:scale-125" />
-      {showSeparator && (
-        <Separator orientation="vertical" className="h-6 bg-black" />
-      )}
+    <div className={cn("flex items-center gap-4", className)} {...props}>
+      <SidebarTrigger variant="outline" className="" />
+      {showSeparator && <Separator className="h-7 w-px bg-border" />}
     </div>
   );
 }
@@ -45,13 +45,7 @@ export function HeaderContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={cn(
-        "flex flex-1 items-center justify-between gap-2",
-        className
-      )}
-      {...props}
-    >
+    <div className={cn("flex flex-1 items-center gap-4", className)} {...props}>
       {children}
     </div>
   );
@@ -64,7 +58,7 @@ export function HeaderActions({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex items-center gap-2 ml-auto", className)}
+      className={cn("flex items-center gap-4 ml-auto", className)}
       {...props}
     >
       {children}
