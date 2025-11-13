@@ -4,6 +4,7 @@ import {
   HeaderContent,
   HeaderSidebarTrigger,
   Main,
+  ModeSwitcher,
   ProfileDropdown,
   Search,
   Wrapper,
@@ -41,6 +42,7 @@ export default function Page() {
 
         <HeaderActions>
           <Search className="" />
+          <ModeSwitcher />
           <ProfileDropdown />
         </HeaderActions>
       </Header>

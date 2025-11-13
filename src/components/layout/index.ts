@@ -9,5 +9,6 @@ export * from "./contexts/dashboard/nav-main";
 export * from "./contexts/dashboard/nav-secondary";
 export * from "./contexts/dashboard/profile-dropdown";
 export * from "./contexts/dashboard/search";
+export * from "./core/mood-switcher";
 
 
