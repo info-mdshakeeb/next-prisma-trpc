@@ -15,28 +15,56 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useDialogState from "@/hooks/use-dialog-state";
+import { authClient } from "@/lib/auth-client";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState();
+  const { data, isPending } = authClient.useSession();
+
+  const user = data?.user;
 
   return (
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Button
+            variant="ghost"
+            className="relative h-8 w-8 rounded-full"
+            disabled={isPending}
+          >
             <Avatar className="h-8 w-8">
-              <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-              <AvatarFallback>SN</AvatarFallback>
+              {isPending ? (
+                <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+              ) : (
+                <>
+                  <AvatarImage
+                    src={user?.image || "/avatars/01.png"}
+                    alt={user?.name}
+                  />
+                  <AvatarFallback>{user?.name?.slice(0, 2)}</AvatarFallback>
+                </>
+              )}
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-1.5">
-              <p className="text-sm leading-none font-medium">satnaing</p>
-              <p className="text-muted-foreground text-xs leading-none">
-                satnaingdev@gmail.com
-              </p>
+              {isPending ? (
+                <>
+                  <div className="h-4 w-32 rounded bg-muted animate-pulse" />
+                  <div className="h-3 w-40 rounded bg-muted animate-pulse" />
+                </>
+              ) : (
+                <>
+                  <p className="text-sm leading-none font-medium">
+                    {user?.name}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-none">
+                    {user?.email}
+                  </p>
+                </>
+              )}
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

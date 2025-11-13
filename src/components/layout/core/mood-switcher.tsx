@@ -3,17 +3,12 @@
 import { Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import { useMetaColor } from "@/hooks/use-meta-color";
 import { useSmoothTheme } from "@/hooks/use-smooth-theme";
 import { AnimatePresence, motion } from "motion/react";
 
 export function ModeSwitcher() {
-  const {
-    toggleTheme: smoothToggleTheme,
-
-    theme,
-  } = useSmoothTheme();
+  const { toggleTheme: smoothToggleTheme, theme } = useSmoothTheme();
 
   const { setMetaColor, metaColor } = useMetaColor();
 
@@ -28,7 +23,7 @@ export function ModeSwitcher() {
   return (
     <Button
       variant="secondary"
-      className="group/toggle h-8 w-8 px-0"
+      className="group/toggle h-8 w-8 px-0 cursor-pointer"
       onClick={toggleTheme}
     >
       <AnimatePresence mode="wait" initial={false}>
