@@ -2,13 +2,17 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon } from "lucide-react";
+import Link from "next/link";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 import { PasswordInput } from "@/components/forms/password-input";
+
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
   FieldContent,
@@ -23,16 +27,11 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 const loginFormSchema = z.object({
   email: z
-    .string()
     .email("Invalid email address")
     .max(255, "Email must be at most 255 characters"),
   password: z
@@ -47,10 +46,10 @@ export function LoginForm({
   callback,
 }: {
   className?: string;
-  callback?: string;
+  callback?: string | string[] | undefined;
 }) {
   const [isPending, startTransition] = useTransition();
-
+  const { login } = useAuth();
   const form = useForm<ILoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -64,24 +63,16 @@ export function LoginForm({
       id: "login",
     });
     startTransition(async () => {
-      await authClient.signIn.email(
-        {
-          ...data,
-          callbackURL: callback ?? "/",
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message, {
-              id: "login",
-            });
-          },
-          onSuccess() {
-            toast.success("Login successful!", {
-              id: "login",
-            });
-          },
-        }
-      );
+      const result = await login({ data, callback });
+      if (result.success) {
+        toast.success(result.message || "Logged in successfully", {
+          id: "login",
+        });
+      } else {
+        toast.error(result.message || "Login failed", {
+          id: "login",
+        });
+      }
     });
   }
 

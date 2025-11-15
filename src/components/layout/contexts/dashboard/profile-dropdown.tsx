@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { SignOutDialog } from "@/components/sign-out-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,7 +100,7 @@ export function ProfileDropdown() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* <SignOutDialog open={!!open} onOpenChange={setOpen} /> */}
+      <SignOutDialog open={!!open} onOpenChange={setOpen} />
     </>
   );
 }
