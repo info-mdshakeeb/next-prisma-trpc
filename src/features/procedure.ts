@@ -14,7 +14,7 @@ export const authRouter = createTRPCRouter({
       return await auth.api.updateUser({
         body: { name }
       });
-    })
+    }),
 });
 // export type definition of API
 export type AuthRouter = typeof authRouter;

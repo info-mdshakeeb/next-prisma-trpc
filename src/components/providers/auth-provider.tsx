@@ -1,31 +1,26 @@
 "use client";
 
-import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
-import { authClient } from "@/lib/auth-client";
 import { Loader } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { Route } from "next";
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext } from "react";
+import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
-type LoginResult = {
-  success: boolean;
-  message?: string;
-};
-
-type LoginArgs = {
-  data: { email: string; password: string };
-  callback?: string | string[] | undefined;
-};
-
-type LoginFn = (args: LoginArgs) => Promise<LoginResult>;
+import { loginAction, logoutAction } from "@/features/action";
+import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
+import { authClient } from "@/lib/auth-client";
 
 interface AuthContextValue {
   user: (typeof authClient.$Infer.Session)["user"] | undefined;
   session: (typeof authClient.$Infer.Session)["session"] | undefined;
-  login: LoginFn;
-  logout: () => Promise<void>;
   authLoading: boolean;
+  logout: () => Promise<void>;
+  login: (args: {
+    data: { email: string; password: string };
+    callback?: string | string[] | undefined;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -35,83 +30,18 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
-  const [isActionLoading, setIsActionLoading] = React.useState(false);
-  const [actionMessage, setActionMessage] = React.useState<string | null>(null);
 
-  // unique per tab
   const tabIdRef = React.useRef<string>(uuidv4());
+  const [isPending, startTransition] = React.useTransition();
+  const {
+    data,
+    isPending: authLoading,
+    refetch,
+    isRefetching,
+  } = authClient.useSession();
 
-  const publish = useCrossTabBus(() => {});
-
-  const startLoading = (message: string) => {
-    setIsActionLoading(true);
-    setActionMessage(message);
-  };
-
-  // Cleanly stop loader
-  const stopLoading = () => {
-    setIsActionLoading(false);
-    setActionMessage(null);
-  };
-
-  const { data, isPending: authLoading } = authClient.useSession();
-
-  const login: LoginFn = async ({ data, callback }) => {
-    let result: { success: boolean; message?: string } = { success: false };
-    await authClient.signIn.email(
-      {
-        ...data,
-        callbackURL: callback
-          ? Array.isArray(callback)
-            ? callback[0]
-            : callback
-          : "/dashboard",
-      },
-      {
-        onError: ({ error }) => {
-          result = {
-            success: false,
-            message: error.message,
-          };
-        },
-        onSuccess: () => {
-          result = {
-            success: true,
-            message: "Login successful",
-          };
-          startLoading("Finalizing login...");
-          publish({
-            id: uuidv4(),
-            type: "login",
-            originTab: tabIdRef.current,
-            ts: Date.now(),
-          });
-          stopLoading();
-        },
-      }
-    );
-    return result;
-  };
-
-  const logout = async () => {
-    startLoading("Logging out...");
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
-          publish({
-            id: uuidv4(),
-            type: "logout",
-            originTab: tabIdRef.current,
-            ts: Date.now(),
-          });
-          stopLoading();
-        },
-      },
-    });
-  };
+  const [actionMessage, setActionMessage] = React.useState<string>("");
 
   // incoming cross-tab events
   const handleIncoming = React.useCallback(
@@ -119,37 +49,90 @@ export default function AuthProvider({
       if (!msg || msg.originTab === tabIdRef.current) return;
 
       if (msg.type === "logout") {
-        startLoading("Logging out...");
         startTransition(() => {
+          setActionMessage("Logging out...");
           router.refresh();
-          stopLoading();
         });
       } else if (msg.type === "login") {
-        startLoading("Loading user session...");
+        setActionMessage("Logging in...");
         startTransition(() => {
           router.refresh();
-          stopLoading();
         });
       }
     },
+
     [router]
   );
+  const publish = useCrossTabBus(handleIncoming);
 
-  // subscribe to bus with stable handler
-  useCrossTabBus(handleIncoming);
+  const login = async ({
+    data,
+    callback,
+  }: {
+    data: { email: string; password: string };
+    callback?: string | string[] | undefined;
+  }) => {
+    toast.loading("Logging in...", { id: "login" });
+    const res = await loginAction({
+      ...data,
+    });
+    if (!res.ok) {
+      toast.error(res.message, { id: "login" });
+      return;
+    }
+    toast.dismiss("login");
+    setActionMessage("Finalizing login...");
+    startTransition(async () => {
+      publish({
+        id: uuidv4(),
+        type: "login",
+        originTab: tabIdRef.current,
+        ts: Date.now(),
+      });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      refetch();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      router.push(callback as Route);
+    });
+  };
+
+  const logout = async () => {
+    setActionMessage("Finalizing logout...");
+    startTransition(async () => {
+      const res = await logoutAction();
+      if (!res.ok) {
+        toast.error(res.message);
+        return;
+      }
+      publish({
+        id: uuidv4(),
+        type: "logout",
+        originTab: tabIdRef.current,
+        ts: Date.now(),
+      });
+      router.refresh();
+      setActionMessage("");
+    });
+  };
 
   const value: AuthContextValue = {
     user: data?.user,
     session: data?.session,
-    login,
-    logout,
     authLoading,
+    logout,
+    login,
   };
+
+  const showAuthLoading = isPending;
+  const overlayText =
+    authLoading || isRefetching
+      ? "Synchronizing session..."
+      : actionMessage || "Loading...";
 
   return (
     <AuthContext.Provider value={value}>
-      <AnimatePresence>
-        {(isPending || isActionLoading) && (
+      <AnimatePresence mode="wait">
+        {showAuthLoading && (
           <motion.div
             key="loading-overlay"
             initial={{ opacity: 0 }}
@@ -166,9 +149,23 @@ export default function AuthProvider({
               className="flex flex-col items-center gap-4"
             >
               <Loader className="h-6 w-6 animate-spin text-primary" />
-              <span className="text-2xl font-semibold text-foreground">
-                {actionMessage || (authLoading ? "Syncing session..." : "")}
-              </span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={overlayText}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 18,
+                    mass: 0.3,
+                  }}
+                  className="text-2xl font-semibold text-foreground"
+                >
+                  {overlayText}
+                </motion.span>
+              </AnimatePresence>
             </motion.div>
           </motion.div>
         )}

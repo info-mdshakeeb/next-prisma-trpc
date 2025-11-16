@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { SignOutDialog } from "@/components/sign-out-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,13 +17,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useDialogState from "@/hooks/use-dialog-state";
-import { authClient } from "@/lib/auth-client";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState();
-  const { data, isPending } = authClient.useSession();
-
-  const user = data?.user;
+  const { user, authLoading } = useAuth();
 
   return (
     <>
@@ -31,10 +29,10 @@ export function ProfileDropdown() {
           <Button
             variant="ghost"
             className="relative h-8 w-8 rounded-full"
-            disabled={isPending}
+            disabled={authLoading}
           >
             <Avatar className="h-8 w-8">
-              {isPending ? (
+              {authLoading ? (
                 <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
               ) : (
                 <>
@@ -42,7 +40,9 @@ export function ProfileDropdown() {
                     src={user?.image || "/avatars/01.png"}
                     alt={user?.name}
                   />
-                  <AvatarFallback>{user?.name?.slice(0, 2)}</AvatarFallback>
+                  <AvatarFallback className="text-muted-foreground">
+                    {user?.name?.slice(0, 2)}
+                  </AvatarFallback>
                 </>
               )}
             </Avatar>
@@ -51,7 +51,7 @@ export function ProfileDropdown() {
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-1.5">
-              {isPending ? (
+              {authLoading ? (
                 <>
                   <div className="h-4 w-32 rounded bg-muted animate-pulse" />
                   <div className="h-3 w-40 rounded bg-muted animate-pulse" />

@@ -3,9 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon } from "lucide-react";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import z from "zod";
 
 import { PasswordInput } from "@/components/forms/password-input";
@@ -48,8 +47,10 @@ export function LoginForm({
   className?: string;
   callback?: string | string[] | undefined;
 }) {
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const { login } = useAuth();
+
   const form = useForm<ILoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -59,26 +60,12 @@ export function LoginForm({
   });
 
   async function onSubmit(data: ILoginFormValues) {
-    toast.loading("Logging in...", {
-      id: "login",
-    });
-    startTransition(async () => {
-      const result = await login({ data, callback });
-      if (result.success) {
-        toast.success(result.message || "Logged in successfully", {
-          id: "login",
-        });
-      } else {
-        toast.error(result.message || "Login failed", {
-          id: "login",
-        });
-      }
-    });
+    await login({ data, callback });
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("", className)}>
-      <fieldset disabled={isPending}>
+      <fieldset disabled={form.formState.isSubmitting}>
         <FieldGroup>
           <Controller
             name="email"

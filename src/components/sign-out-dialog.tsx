@@ -23,11 +23,14 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const [isLoading, startLoading] = useTransition();
   const { logout } = useAuth();
   const handleSignOut = async () => {
-    await logout();
+    startLoading(async () => {
+      await logout();
+      onOpenChange(false);
+    });
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open}>
       <AlertDialogTrigger asChild></AlertDialogTrigger>
 
       <AlertDialogContent>
@@ -42,9 +45,15 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={() => onOpenChange(false)}>
+            Cancel
+          </AlertDialogCancel>
 
-          <AlertDialogAction disabled={isLoading} onClick={handleSignOut}>
+          <AlertDialogAction
+            disabled={isLoading}
+            onClick={handleSignOut}
+            autoFocus
+          >
             {isLoading ? (
               <Loader2Icon className="size-4 animate-spin" />
             ) : (

@@ -8,7 +8,8 @@ export function Main({ children, fluid, className, ...props }: BodyProps) {
   return (
     <div
       className={cn(
-        "group-data-[layout=fixed]/layout:h-[calc(100vh-5rem)]  group-data-[layout=fixed]/layout:overflow-auto",
+        "group-data-[layout=fixed]/layout:h-[calc(100vh-4rem)]",
+        "md:group-data-[layout=fixed]/layout:h-[calc(100vh-5rem)]  group-data-[layout=fixed]/layout:overflow-auto",
         className
       )}
       {...props}

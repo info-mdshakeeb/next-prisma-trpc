@@ -22,7 +22,7 @@ import {
 export default function Page() {
   return (
     <Wrapper fixed>
-      <Header className="border-b-0!">
+      <Header className="">
         <HeaderContent>
           <HeaderSidebarTrigger showSeparator />
           <Breadcrumb>
