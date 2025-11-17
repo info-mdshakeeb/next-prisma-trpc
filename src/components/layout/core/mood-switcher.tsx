@@ -22,8 +22,9 @@ export function ModeSwitcher() {
 
   return (
     <Button
+      size={"icon-sm"}
       variant="outline"
-      className="group/toggle h-8 w-8 px-0 cursor-pointer rounded-full "
+      className="group/toggle cursor-pointer "
       onClick={toggleTheme}
     >
       <AnimatePresence mode="wait" initial={false}>

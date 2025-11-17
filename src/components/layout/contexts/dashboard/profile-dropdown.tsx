@@ -31,16 +31,16 @@ export function ProfileDropdown() {
             className="relative h-8 w-8 rounded-full"
             disabled={authLoading}
           >
-            <Avatar className="h-8 w-8 bg-background">
+            <Avatar className="h-8 w-8">
               {authLoading ? (
-                <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+                <div className="h-8 w-8 rounded-full bg-gray-300 animate-pulse" />
               ) : (
                 <>
                   <AvatarImage
                     src={user?.image || "/avatars/01.png"}
                     alt={user?.name}
                   />
-                  <AvatarFallback className="bg-background">
+                  <AvatarFallback className="bg-background dark:bg-muted">
                     {user?.name?.slice(0, 2)}
                   </AvatarFallback>
                 </>

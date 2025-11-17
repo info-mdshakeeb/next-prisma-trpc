@@ -39,7 +39,7 @@ export default function AppHeader() {
           </div>
           <Search className="hidden md:flex" />
         </HeaderContent>
-        <HeaderActions>
+        <HeaderActions className="gap-2 pr-2">
           <ModeSwitcher />
           <ProfileDropdown />
         </HeaderActions>
