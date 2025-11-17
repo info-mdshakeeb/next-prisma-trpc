@@ -19,7 +19,7 @@ import Link from "next/link";
 export default function page() {
   return (
     <>
-      <Header className="pt-2 bg-background/10 backdrop-blur-sm">
+      <Header className="bg-background/10 backdrop-blur-sm">
         <HeaderContent>
           <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
           <Breadcrumb>

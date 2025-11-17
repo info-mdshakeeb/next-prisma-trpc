@@ -21,7 +21,7 @@ import Link from "next/link";
 export default function Page() {
   return (
     <>
-      <Header className="py-3 bg-background/10 backdrop-blur-sm ">
+      <Header className="bg-background/10 backdrop-blur-sm ">
         <HeaderContent>
           <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
           <Breadcrumb>

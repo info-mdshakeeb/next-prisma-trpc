@@ -11,7 +11,7 @@ export function Header({
   return (
     <header
       className={cn(
-        "z-50 h-16 bg-background",
+        "z-50 min-h-14 bg-background",
         "group-data-[slot=sidebar-inset]:sticky group-data-[slot=sidebar-inset]:top-0 flex h-full items-center gap-2 px-2",
         className
       )}
