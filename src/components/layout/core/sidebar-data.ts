@@ -36,7 +36,7 @@ export const sidebarData: INavGroup[] = [
       },
       {
         title: 'Users',
-        url: '/users',
+        url: '/dashboard/users',
         icon: Users,
       },
 

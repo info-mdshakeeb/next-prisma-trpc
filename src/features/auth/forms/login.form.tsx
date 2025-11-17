@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -47,8 +46,6 @@ export function LoginForm({
   className?: string;
   callback?: string | string[] | undefined;
 }) {
-  const router = useRouter();
-
   const { login } = useAuth();
 
   const form = useForm<ILoginFormValues>({

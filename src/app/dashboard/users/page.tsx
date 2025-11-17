@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 
-export default function Page() {
+export default function page() {
   return (
     <>
       <Header className="pt-2 bg-background/10 backdrop-blur-sm">
@@ -26,14 +26,14 @@ export default function Page() {
             <BreadcrumbList>
               <BreadcrumbItem className="hidden lg:block">
                 <BreadcrumbLink asChild>
-                  <Link href="/">
-                    <LinkLoadingIndicator title="home" />
+                  <Link href="/dashboard">
+                    <LinkLoadingIndicator title="Dashboard" />
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden lg:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                <BreadcrumbPage>Users</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
