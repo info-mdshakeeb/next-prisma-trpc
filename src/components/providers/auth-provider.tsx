@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Route } from "next";
 import { useRouter } from "next/navigation";
@@ -11,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { loginAction, logoutAction } from "@/features/action";
 import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
 import { authClient } from "@/lib/auth-client";
+import { SVGLoader } from "../loader/svg-loader";
 
 interface AuthContextValue {
   user: (typeof authClient.$Infer.Session)["user"] | undefined;
@@ -148,7 +148,7 @@ export default function AuthProvider({
               transition={{ duration: 0.2 }}
               className="flex flex-col items-center gap-4"
             >
-              <Loader className="h-6 w-6 animate-spin text-primary" />
+              <SVGLoader size={50} />
               <AnimatePresence mode="wait">
                 <motion.span
                   key={overlayText}
