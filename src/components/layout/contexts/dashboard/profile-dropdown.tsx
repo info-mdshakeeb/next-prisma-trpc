@@ -27,11 +27,11 @@ export function ProfileDropdown() {
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
+            variant="outline"
             className="relative h-8 w-8 rounded-full"
             disabled={authLoading}
           >
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-8 w-8 bg-background">
               {authLoading ? (
                 <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
               ) : (
@@ -40,7 +40,7 @@ export function ProfileDropdown() {
                     src={user?.image || "/avatars/01.png"}
                     alt={user?.name}
                   />
-                  <AvatarFallback className="text-muted-foreground">
+                  <AvatarFallback className="bg-background">
                     {user?.name?.slice(0, 2)}
                   </AvatarFallback>
                 </>

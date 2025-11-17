@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SearchCheckIcon } from "lucide-react";
 
 interface Props {
   className?: string;
@@ -13,14 +14,17 @@ export function Search({ className = "" }: Props) {
   // const { setOpen, open } = useSearch();
   return (
     <Button
-      variant={"secondary"}
+      variant={"outline"}
       className={cn(
-        "text-muted-foreground relative h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit md:w-40 lg:w-56",
+        "text-muted-foreground relative h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit  md:w-56 ",
         className
       )}
       // onClick={() => setOpen(true)}
     >
-      <span className="hidden lg:inline-flex">Search Here...</span>
+      <span className="hidden lg:inline-flex items-center">
+        <SearchCheckIcon className="size-4 mr-1 text-muted-foreground" />
+        Search Here...
+      </span>
       <span className="inline-flex lg:hidden">Search...</span>
 
       <div className="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">

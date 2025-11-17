@@ -219,3 +219,11 @@
     @apply relative touch-manipulation after:absolute after:-inset-2;
   }
 }
+
+.material-medium {
+  box-shadow: 0 2px 2px #0000000a, 0 8px 8px -8px #0000000a;
+  border-style: solid;
+  border-width: 1px;
+  background-clip: padding-box;
+  border-radius: 6px;
+}

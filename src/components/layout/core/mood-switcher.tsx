@@ -22,7 +22,7 @@ export function ModeSwitcher() {
 
   return (
     <Button
-      variant="secondary"
+      variant="outline"
       className="group/toggle h-8 w-8 px-0 cursor-pointer rounded-full "
       onClick={toggleTheme}
     >
@@ -34,7 +34,7 @@ export function ModeSwitcher() {
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.13 }}
-            className="text-muted-foreground"
+            className=""
           >
             <Sun />
           </motion.span>
@@ -45,7 +45,7 @@ export function ModeSwitcher() {
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.13 }}
-            className="text-muted-foreground"
+            className=""
           >
             <Moon />
           </motion.span>

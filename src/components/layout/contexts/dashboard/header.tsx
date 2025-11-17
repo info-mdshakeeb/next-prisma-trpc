@@ -5,23 +5,19 @@ import * as React from "react";
 
 export function Header({
   className,
-  fixed,
   children,
   ...props
-}: React.HTMLAttributes<HTMLElement> & { fixed?: boolean }) {
+}: React.HTMLAttributes<HTMLElement>) {
   return (
     <header
-      data-layout-header={fixed ? "fixed" : "auto"}
       className={cn(
-        "z-50 h-16  bg-background ",
-        "rounded-t-xl group-data-[layout=fixed]/layout:border-b",
-
-        fixed && "sticky top-0 border-b",
+        "z-50 h-16 bg-background",
+        "group-data-[slot=sidebar-inset]:sticky group-data-[slot=sidebar-inset]:top-0 flex h-full items-center gap-2 px-2",
         className
       )}
       {...props}
     >
-      <div className="flex h-full items-center gap-2 px-4">{children}</div>
+      {children}
     </header>
   );
 }
@@ -33,7 +29,7 @@ export function HeaderSidebarTrigger({
 }: React.HTMLAttributes<HTMLDivElement> & { showSeparator?: boolean }) {
   return (
     <div className={cn("flex items-center gap-4", className)} {...props}>
-      <SidebarTrigger variant="outline" className="" />
+      <SidebarTrigger variant="ghost" className="" size={"icon-lg"} />
       {showSeparator && <Separator className="h-7 w-px bg-border" />}
     </div>
   );

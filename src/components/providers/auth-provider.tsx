@@ -92,7 +92,7 @@ export default function AuthProvider({
       await new Promise((resolve) => setTimeout(resolve, 500));
       refetch();
       await new Promise((resolve) => setTimeout(resolve, 400));
-      router.push(callback as Route);
+      router.push(callback ? (callback as Route) : "/dashboard");
     });
   };
 

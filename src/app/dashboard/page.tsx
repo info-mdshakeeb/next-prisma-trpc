@@ -1,13 +1,8 @@
 import {
   Header,
-  HeaderActions,
   HeaderContent,
   HeaderSidebarTrigger,
   Main,
-  ModeSwitcher,
-  ProfileDropdown,
-  Search,
-  Wrapper,
 } from "@/components/layout";
 
 import {
@@ -21,10 +16,10 @@ import {
 
 export default function Page() {
   return (
-    <Wrapper fixed>
-      <Header className="">
+    <>
+      <Header className="pt-2 bg-background/10 backdrop-blur-sm">
         <HeaderContent>
-          <HeaderSidebarTrigger showSeparator />
+          <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden lg:block">
@@ -39,12 +34,6 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </HeaderContent>
-
-        <HeaderActions>
-          <Search className="" />
-          <ModeSwitcher />
-          <ProfileDropdown />
-        </HeaderActions>
       </Header>
 
       <Main className="">
@@ -55,6 +44,6 @@ export default function Page() {
           <div className="flex w-full justify-between"></div>
         </div>
       </Main>
-    </Wrapper>
+    </>
   );
 }
