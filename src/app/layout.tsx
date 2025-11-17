@@ -6,6 +6,7 @@ import { fontVariables } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
 import Providers from "@/components/providers";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -85,6 +86,7 @@ export default function RootLayout({
         )}
       >
         <Providers>{children}</Providers>
+        <TailwindIndicator />
       </body>
     </html>
   );

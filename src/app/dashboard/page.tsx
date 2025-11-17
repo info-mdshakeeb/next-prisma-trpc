@@ -27,12 +27,12 @@ export default function Page() {
           <HeaderSidebarTrigger showSeparator />
           <Breadcrumb>
             <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbItem className="hidden lg:block">
                 <BreadcrumbLink href="#">
                   Building Your Application
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbSeparator className="hidden lg:block" />
               <BreadcrumbItem>
                 <BreadcrumbPage>Data Fetching</BreadcrumbPage>
               </BreadcrumbItem>
