@@ -1,5 +1,6 @@
 import {
   Header,
+  HeaderActions,
   HeaderContent,
   HeaderSidebarTrigger,
   Main,
@@ -14,12 +15,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Page() {
   return (
     <>
-      <Header className="pt-2 bg-background/10 backdrop-blur-sm">
+      <Header className="py-3 bg-background/10 backdrop-blur-sm ">
         <HeaderContent>
           <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
           <Breadcrumb>
@@ -27,7 +29,7 @@ export default function Page() {
               <BreadcrumbItem className="hidden lg:block">
                 <BreadcrumbLink asChild>
                   <Link href="/">
-                    <LinkLoadingIndicator title="home" />
+                    <LinkLoadingIndicator title="Home" />
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -38,6 +40,11 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </HeaderContent>
+        <HeaderActions>
+          <Button size={"sm"} variant={"outline"}>
+            New User
+          </Button>
+        </HeaderActions>
       </Header>
 
       <Main className="">

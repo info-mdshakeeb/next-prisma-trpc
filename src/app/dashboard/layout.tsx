@@ -1,7 +1,9 @@
 import AppHeader from "@/components/layout/contexts/dashboard/app-header";
 import { AppSidebar } from "@/components/layout/contexts/dashboard/app-sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+
 import { cookies } from "next/headers";
 import React from "react";
 
@@ -39,10 +41,13 @@ export default async function layout({
               "group",
               "mx-2! md:ml-0!",
               "rounded-[6px]! mt-0! material-medium",
-              "h-[calc(100vh-4rem)]  overflow-auto shadow-lg border-foreground/10"
+              "h-[calc(100vh-4rem)]  overflow-hidden shadow-lg border-foreground/10"
+              // "no-scrollbar"
             )}
           >
-            {children}
+            <ScrollArea className="flex flex-1 flex-col w-full overflow-auto">
+              {children}
+            </ScrollArea>
           </SidebarInset>
         </div>
       </SidebarProvider>
