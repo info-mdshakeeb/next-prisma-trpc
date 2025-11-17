@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import Logo from "@/components/layout/core/logo";
+import { Logo } from "@/components/layout";
 import { FieldDescription } from "@/components/ui/field";
 import { LoginForm } from "@/features/auth/forms/login.form";
 import { requireUnAuth } from "@/lib/auth-utils";

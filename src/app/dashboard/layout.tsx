@@ -1,11 +1,10 @@
-import AppHeader from "@/components/layout/contexts/dashboard/app-header";
-import { AppSidebar } from "@/components/layout/contexts/dashboard/app-sidebar";
+import { cookies } from "next/headers";
+import React from "react";
+
+import { AppHeader, AppSidebar } from "@/components/layout";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-
-import { cookies } from "next/headers";
-import React from "react";
 
 export default async function layout({
   children,

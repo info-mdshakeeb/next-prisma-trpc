@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
-import Logo from "@/components/layout/core/logo";
+import { Logo } from "@/components/layout";
 import { FieldDescription } from "@/components/ui/field";
 import { RegisterForm } from "@/features/auth/forms/register.form";
 import { requireUnAuth } from "@/lib/auth-utils";

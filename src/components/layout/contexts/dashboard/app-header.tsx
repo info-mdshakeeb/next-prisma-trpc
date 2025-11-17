@@ -1,5 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { TextAlignStart } from "lucide-react";
+
 import Logo from "../../core/logo";
 import { ModeSwitcher } from "../../core/mood-switcher";
 import { Header, HeaderActions, HeaderContent } from "./header";
