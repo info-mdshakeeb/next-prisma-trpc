@@ -7,7 +7,7 @@ import React, { createContext, useContext } from "react";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
-import { loginAction, logoutAction } from "@/features/action";
+import { loginAction, logoutAction } from "@/features/auth/action";
 import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
 import { authClient } from "@/lib/auth-client";
 import { SVGLoader } from "../loader/svg-loader";

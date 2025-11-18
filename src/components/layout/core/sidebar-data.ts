@@ -19,6 +19,11 @@ export const sidebarData: INavGroup[] = [
         icon: LayoutDashboard,
       },
       {
+        title: 'Users',
+        url: '/users',
+        icon: Users,
+      },
+      {
         title: 'Tasks',
         url: '/tasks',
         icon: ListTodo,
@@ -34,11 +39,7 @@ export const sidebarData: INavGroup[] = [
         badge: '3',
         icon: MessagesSquare,
       },
-      {
-        title: 'Users',
-        url: '/users',
-        icon: Users,
-      },
+
 
     ],
   },

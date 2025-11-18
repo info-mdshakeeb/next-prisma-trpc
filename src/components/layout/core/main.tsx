@@ -1,26 +1,27 @@
 import { cn } from "@/lib/utils";
 
-type BodyProps = React.HTMLAttributes<HTMLElement> & {
-  fluid?: boolean;
+type MainProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean;
+  fluid?: boolean;
+  ref?: React.Ref<HTMLElement>;
 };
 
-export function Main({
-  children,
-  fluid,
-  fixed,
-  className,
-  ...props
-}: BodyProps) {
+export function Main({ fixed, className, fluid, ...props }: MainProps) {
   return (
-    <div
+    <main
       data-layout={fixed ? "fixed" : "auto"}
-      className={cn(fixed && "flex grow flex-col overflow-hidden ", className)}
+      className={cn(
+        "px-4 pt-6",
+
+        // If layout is fixed, make the main container flex and grow
+        fixed && "flex grow flex-col overflow-hidden",
+
+        // If layout is not fluid, set the max-width
+        !fluid &&
+          "@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl",
+        className
+      )}
       {...props}
-    >
-      <div className={cn(!fluid && "container mx-auto")}>
-        <div className="flex flex-1 flex-col ">{children}</div>
-      </div>
-    </div>
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { authRouter } from '@/features/procedure';
+import { authRouter } from '@/features/auth/procedure';
 import { createTRPCRouter } from '../init';
 export const appRouter = createTRPCRouter({
   auth: authRouter,

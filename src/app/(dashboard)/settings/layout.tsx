@@ -2,12 +2,13 @@ import { Metadata } from "next";
 
 import {
   Header,
-  HeaderActions,
-  HeaderContent,
-  HeaderSidebarTrigger,
   Main,
+  ModeSwitcher,
+  ProfileDropdown,
+  Search,
+  SidebarNav,
 } from "@/components/layout";
-import SidebarNav from "@/components/layout/contexts/settings/sidebar-nav";
+import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = {
   title: "Forms",
@@ -20,43 +21,30 @@ interface SettingsLayoutProps {
 export default async function layout({ children }: SettingsLayoutProps) {
   return (
     <>
-      <Header className="border-b">
-        <HeaderContent>
-          <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
-          {/* <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden lg:block">
-                <BreadcrumbLink asChild>
-                  <Link href="/">
-                    <LinkLoadingIndicator title="Home" />
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden lg:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb> */}
-          <p className="text-xl sm:text-[27px] font-bold tracking-tight text-foreground">
-            Settings
-          </p>
-        </HeaderContent>
-        <HeaderActions>
-          <aside className="lg:hidden">
-            <SidebarNav />
-          </aside>
-        </HeaderActions>
+      <Header>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <ModeSwitcher />
+
+          <ProfileDropdown />
+        </div>
       </Header>
 
-      <Main fixed fluid>
-        <div className="flex flex-1 overflow-hidden gap-3 ">
-          <div className="top-0 hidden lg:flex  lg:sticky lg:w-1/5  ">
+      <Main fixed>
+        <div className="space-y-0.5">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+            Settings
+          </h1>
+          <p className="text-muted-foreground">
+            Manage your account settings and set e-mail preferences.
+          </p>
+        </div>
+        <Separator className="my-4 lg:my-6" />
+        <div className="flex flex-1 flex-col space-y-2 overflow-hidden md:space-y-2 lg:flex-row lg:space-y-0 lg:space-x-12">
+          <aside className="top-0 lg:sticky lg:w-1/5">
             <SidebarNav />
-          </div>
-          <div className="overflow-scroll flex-1 h-[calc(100vh-7.6rem)]">
-            {children}
-          </div>
+          </aside>
+          <div className="flex w-full overflow-y-hidden p-1 ">{children}</div>
         </div>
       </Main>
     </>
