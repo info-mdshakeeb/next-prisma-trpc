@@ -24,3 +24,8 @@ export const auth = betterAuth({
   },
   plugins: [nextCookies()]
 });
+
+
+export type IUser = typeof auth.$Infer.Session.user
+export type ISession = typeof auth.$Infer.Session.session
+export type ErrorCode = keyof typeof auth.$ERROR_CODES | "UNKNOWN_ERROR";

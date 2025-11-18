@@ -9,12 +9,13 @@ import { v4 as uuidv4 } from "uuid";
 
 import { loginAction, logoutAction } from "@/features/auth/action";
 import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
+import { ISession, IUser } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import { SVGLoader } from "../loader/svg-loader";
 
 interface AuthContextValue {
-  user: (typeof authClient.$Infer.Session)["user"] | undefined;
-  session: (typeof authClient.$Infer.Session)["session"] | undefined;
+  user: IUser | undefined;
+  session: ISession | undefined;
   authLoading: boolean;
   logout: () => Promise<void>;
   login: (args: {
