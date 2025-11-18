@@ -37,10 +37,12 @@ export default async function layout({
           <AppSidebar variant="inset" />
           <SidebarInset
             className={cn(
-              "group",
+              "group relative",
               "mx-2! md:ml-0!",
               "rounded-[6px]! mt-0! material-medium",
-              "h-[calc(100vh-4rem)]  overflow-hidden shadow-lg border-foreground/10"
+              "has-data-[layout=fixed]:h-[calc(100svh-4rem)]",
+              "peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-4rem)]",
+              " overflow-hidden shadow-lg border-foreground/10"
               // "no-scrollbar"
             )}
           >

@@ -1,3 +1,7 @@
 export default function page() {
-  return <div className="h-screen bg-red-500">dasdasd</div>;
+  return (
+    <div className="">
+      <div className="h-screen "></div>
+    </div>
+  );
 }

@@ -1,6 +1,12 @@
 import { Metadata } from "next";
 
-import { Main } from "@/components/layout";
+import {
+  Header,
+  HeaderActions,
+  HeaderContent,
+  HeaderSidebarTrigger,
+  Main,
+} from "@/components/layout";
 import SidebarNav from "@/components/layout/contexts/settings/sidebar-nav";
 
 export const metadata: Metadata = {
@@ -13,24 +19,46 @@ interface SettingsLayoutProps {
 
 export default async function layout({ children }: SettingsLayoutProps) {
   return (
-    <Main className="pb-0 @container/main relative">
-      <div className="flex flex-1 flex-col space-y-2 overflow-hidden md:space-y-2 lg:flex-row lg:space-x-12 lg:space-y-0 ">
-        <aside className="top-0 lg:sticky lg:w-1/5 container">
-          <SidebarNav />
-        </aside>
-        <div className="flex w-full overflow-y-hidden ">{children}</div>
-      </div>
+    <>
+      <Header className="border-b">
+        <HeaderContent>
+          <HeaderSidebarTrigger showSeparator className="hidden md:flex" />
+          {/* <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden lg:block">
+                <BreadcrumbLink asChild>
+                  <Link href="/">
+                    <LinkLoadingIndicator title="Home" />
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden lg:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb> */}
+          <p className="text-xl sm:text-[27px] font-bold tracking-tight text-foreground">
+            Settings
+          </p>
+        </HeaderContent>
+        <HeaderActions>
+          <aside className="lg:hidden">
+            <SidebarNav />
+          </aside>
+        </HeaderActions>
+      </Header>
 
-      {/* <div className="flex gap-[10rem] rotate-[-20deg] absolute top-[-50rem] right-[-50rem] z-[0] blur-[4rem] skew-[-40deg]  opacity-50">
-        <div className="w-[10rem] h-[20rem]  bg-linear-90 from-white to-blue-300"></div>
-        <div className="w-[10rem] h-[20rem]  bg-linear-90 from-white to-blue-300"></div>
-        <div className="w-[10rem] h-[20rem]  bg-linear-90 from-white to-blue-300"></div>
-      </div>
-      <div className="flex gap-[10rem] rotate-[-20deg] absolute top-[-60rem] right-[-60rem] z-[0] blur-[4rem] skew-[-40deg]  opacity-50">
-        <div className="w-[10rem] h-[30rem]  bg-linear-90 from-white to-blue-300"></div>
-        <div className="w-[10rem] h-[30rem]  bg-linear-90 from-white to-blue-300"></div>
-        <div className="w-[10rem] h-[30rem]  bg-linear-90 from-white to-blue-300"></div>
-      </div> */}
-    </Main>
+      <Main fixed fluid>
+        <div className="flex flex-1 overflow-hidden gap-3 ">
+          <div className="top-0 hidden lg:flex  lg:sticky lg:w-1/5  ">
+            <SidebarNav />
+          </div>
+          <div className="overflow-scroll flex-1 h-[calc(100vh-7.6rem)]">
+            {children}
+          </div>
+        </div>
+      </Main>
+    </>
   );
 }

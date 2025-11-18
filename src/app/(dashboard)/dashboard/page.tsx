@@ -47,7 +47,7 @@ export default function Page() {
         </HeaderActions>
       </Header>
 
-      <Main className="">
+      <Main className="" fixed>
         <div className="h-screen">
           <div className="flex w-full justify-between"></div>
         </div>

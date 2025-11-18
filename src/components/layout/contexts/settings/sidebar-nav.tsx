@@ -12,7 +12,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { cn } from "@/lib/utils";
@@ -39,7 +38,7 @@ export default function SidebarNav({
       <div className="p-1 lg:hidden">
         <Select value={val} onValueChange={handleSelect}>
           <SelectTrigger className="h-12 sm:w-48">
-            <SelectValue placeholder="Theme" />
+            {sidebarNavItems.find((item) => item.href === val)?.title}
           </SelectTrigger>
           <SelectContent>
             {sidebarNavItems?.map((item) => {
@@ -64,7 +63,7 @@ export default function SidebarNav({
 
       <ScrollArea
         type="always"
-        className="hidden w-full min-w-40 bg-background px-1 py-2 lg:block"
+        className="hidden w-full min-w-40 bg-background  py-2 lg:block "
       >
         <nav
           className={cn(
