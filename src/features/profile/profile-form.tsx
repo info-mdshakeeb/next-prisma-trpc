@@ -49,7 +49,7 @@ export function ProfileForm() {
       name: user?.name ?? "",
       username: user?.name ?? "",
       email: user?.email ?? "",
-      phone_number: "",
+      phone_number: user?.phone ?? "",
       photo: "",
     },
     mode: "onChange",

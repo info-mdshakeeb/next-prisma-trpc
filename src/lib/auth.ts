@@ -11,6 +11,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    additionalFields: {
+      phone: { type: "string", optional: true, input: false },
+      role: { type: ["USER", "ADMIN"] },
+    }
+  },
   rateLimit: {
     enabled: true,
     window: 20,
