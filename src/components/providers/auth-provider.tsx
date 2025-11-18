@@ -34,33 +34,28 @@ export default function AuthProvider({
 
   const tabIdRef = React.useRef<string>(uuidv4());
   const [isPending, startTransition] = React.useTransition();
-  const {
-    data,
-    isPending: authLoading,
-    refetch,
-    isRefetching,
-  } = authClient.useSession();
+  const { data, isPending: authLoading, refetch } = authClient.useSession();
 
   const [actionMessage, setActionMessage] = React.useState<string>("");
+  const [isLoggingIn, setIsLoggingIn] = React.useState(false);
 
   // incoming cross-tab events
   const handleIncoming = React.useCallback(
     (msg: AuthEvent) => {
       if (!msg || msg.originTab === tabIdRef.current) return;
 
-      if (msg.type === "logout") {
-        startTransition(() => {
-          setActionMessage("Logging out...");
-          router.refresh();
-        });
-      } else if (msg.type === "login") {
-        setActionMessage("Logging in...");
+      const messages = {
+        logout: "Synchronizing logout across tabs...",
+        login: "Synchronizing login across tabs...",
+      };
+
+      if (msg.type in messages) {
+        setActionMessage(messages[msg.type as keyof typeof messages]);
         startTransition(() => {
           router.refresh();
         });
       }
     },
-
     [router]
   );
   const publish = useCrossTabBus(handleIncoming);
@@ -81,19 +76,32 @@ export default function AuthProvider({
       return;
     }
     toast.dismiss("login");
-    setActionMessage("Finalizing login...");
-    startTransition(async () => {
+    setIsLoggingIn(true);
+    try {
+      setActionMessage("Setting up your session...");
+      await new Promise((resolve) => setTimeout(resolve, 700));
       publish({
         id: uuidv4(),
         type: "login",
         originTab: tabIdRef.current,
         ts: Date.now(),
       });
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      setActionMessage("Loading your preferences...");
       refetch();
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      router.push(callback ? (callback as Route) : "/dashboard");
-    });
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      setActionMessage("Almost there...");
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      startTransition(() => {
+        router.push(callback ? (callback as Route) : "/dashboard");
+      });
+    } catch (_err) {
+    } finally {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      setIsLoggingIn(false);
+      setActionMessage("");
+    }
   };
 
   const logout = async () => {
@@ -123,52 +131,21 @@ export default function AuthProvider({
     login,
   };
 
-  const showAuthLoading = isPending;
-  const overlayText =
-    authLoading || isRefetching
-      ? "Synchronizing session..."
-      : actionMessage || "Loading...";
+  const getLoadingState = () => {
+    if (isPending || isLoggingIn) {
+      return { show: true, message: actionMessage || "Loading..." };
+    }
+    return { show: false, message: "" };
+  };
+  const loadingState = getLoadingState();
 
   return (
     <AuthContext.Provider value={value}>
       <AnimatePresence mode="wait">
-        {showAuthLoading && (
-          <motion.div
-            key="loading-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 flex items-center justify-center bg-background backdrop-blur-sm z-51"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col items-center gap-4"
-            >
-              <SVGLoader size={50} />
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={overlayText}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 280,
-                    damping: 18,
-                    mass: 0.3,
-                  }}
-                  className="text-2xl font-semibold text-foreground"
-                >
-                  {overlayText}
-                </motion.span>
-              </AnimatePresence>
-            </motion.div>
-          </motion.div>
-        )}
+        <LoadingOverlay
+          show={loadingState.show}
+          message={loadingState.message}
+        />
       </AnimatePresence>
       {children}
     </AuthContext.Provider>
@@ -179,4 +156,55 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
   return ctx;
+}
+
+// Loading overlay component for better reusability
+function LoadingOverlay({
+  message = "Loading...",
+  show = false,
+}: {
+  message?: string;
+  show: boolean;
+}) {
+  return (
+    <AnimatePresence mode="wait">
+      {show && (
+        <motion.div
+          key="loading-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 flex items-center justify-center bg-background backdrop-blur-sm z-99"
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2, type: "spring", stiffness: 300 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <SVGLoader size={50} />
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={message}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 280,
+                  damping: 18,
+                  mass: 0.3,
+                }}
+                className="text-lg font-medium text-foreground text-center max-w-xs"
+              >
+                {message}
+              </motion.span>
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }

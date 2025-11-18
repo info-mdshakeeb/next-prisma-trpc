@@ -15,7 +15,6 @@ type LoginInput = z.infer<typeof LoginSchema>;
 type LoginResponse =
   | {
     ok: true;
-    redirect: string;
     user: Awaited<ReturnType<typeof auth.api.signInEmail>>["user"];
   }
   | {
@@ -24,25 +23,17 @@ type LoginResponse =
   };
 
 export async function loginAction(input: LoginInput): Promise<LoginResponse> {
-  const { email, password, callback } = LoginSchema.parse(input);
-
-  const callbackURL = callback
-    ? Array.isArray(callback)
-      ? callback[0]
-      : callback
-    : undefined;
-
+  const { email, password } = LoginSchema.parse(input);
   try {
     const res = await auth.api.signInEmail({
       body: {
         email,
         password,
-        callbackURL,
       },
     });
     return {
       ok: true,
-      redirect: callbackURL ?? "/dashboard",
+
       user: res.user,
     };
   } catch (error) {

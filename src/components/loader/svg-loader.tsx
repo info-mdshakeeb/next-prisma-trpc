@@ -11,21 +11,21 @@ export function SVGLoader({ size = 120 }: SVGLoaderProps) {
     <div className="flex flex-col items-center justify-center gap-6 text-center">
       <style>{`
   :root {
-    --prime-loader-duration: 1s;
-    --prime-loader-ease: cubic-bezier(0.65, 0, 0.35, 1);
+    --prime-loader-duration: 2.6s;
+    --prime-loader-ease: cubic-bezier(0.45, 0, 0.55, 1);
   }
 
   @keyframes primeStroke {
     0% {
       stroke-dashoffset: var(--prime-dash, 1080);
-      opacity: 0.35;
+      opacity: 0.2;
     }
-    45% {
-      opacity: 0.9;
+    40% {
+      opacity: 0.95;
     }
     100% {
       stroke-dashoffset: 0;
-      opacity: 0.75;
+      opacity: 0.7;
     }
   }
 
@@ -39,9 +39,9 @@ export function SVGLoader({ size = 120 }: SVGLoaderProps) {
   }
 
   .stroke-path-1 { animation-delay: 0s; }
-  .stroke-path-2 { animation-delay: 0.2s; }
-  .stroke-path-3 { animation-delay: 0.45s; }
-  .stroke-path-4 { animation-delay: 0.65s; }
+  .stroke-path-2 { animation-delay: 0.18s; }
+  .stroke-path-3 { animation-delay: 0.36s; }
+  .stroke-path-4 { animation-delay: 0.54s; }
 `}</style>
 
       <svg
