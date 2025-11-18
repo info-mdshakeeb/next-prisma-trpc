@@ -51,7 +51,8 @@ export default function AuthProvider({
 
       if (msg.type in messages) {
         setActionMessage(messages[msg.type as keyof typeof messages]);
-        startTransition(() => {
+        startTransition(async () => {
+          await new Promise((resolve) => setTimeout(resolve, 800));
           router.refresh();
         });
       }
@@ -158,10 +159,9 @@ export function useAuth() {
   return ctx;
 }
 
-// Loading overlay component for better reusability
 function LoadingOverlay({
   message = "Loading...",
-  show = false,
+  show,
 }: {
   message?: string;
   show: boolean;
@@ -170,38 +170,35 @@ function LoadingOverlay({
     <AnimatePresence mode="wait">
       {show && (
         <motion.div
-          key="loading-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 flex items-center justify-center bg-background backdrop-blur-sm z-99"
+          initial={{ scale: 0.3, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.3, opacity: 0 }}
+          transition={{
+            duration: 0.7,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          className="fixed inset-0 z-99 flex items-center justify-center
+             bg-background origin-center"
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
+            initial={{ scale: 0.92, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.2, type: "spring", stiffness: 300 }}
+            exit={{ scale: 0.92, opacity: 0 }}
+            transition={{ duration: 0.45 }}
             className="flex flex-col items-center gap-4"
           >
             <SVGLoader size={50} />
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={message}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 280,
-                  damping: 18,
-                  mass: 0.3,
-                }}
-                className="text-lg font-medium text-foreground text-center max-w-xs"
-              >
-                {message}
-              </motion.span>
-            </AnimatePresence>
+
+            <motion.span
+              key={message}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.4 }}
+              className="text-lg font-medium text-foreground text-center max-w-xs"
+            >
+              {message}
+            </motion.span>
           </motion.div>
         </motion.div>
       )}
