@@ -9,13 +9,13 @@ type ContentSectionProps = {
 export function ContentSection({ title, desc, children }: ContentSectionProps) {
   return (
     <div className="flex flex-1 flex-col ">
-      <div className="flex-none">
+      <div className="flex-none pl-1">
         <h3 className="text-lg font-medium font-space-grotesk">{title}</h3>
         <p className="text-muted-foreground text-sm">{desc}</p>
       </div>
       <Separator className="mt-4 flex-none" />
       <div className="faded-bottom h-full w-full overflow-y-auto scroll-smooth pe-4 pb-12 ">
-        <div className="-mx-1 px-1.5 lg:max-w-xl pt-4">{children}</div>
+        <div className="-mx-1 px-1.5 lg:max-w-xl pt-4 pl-2 ">{children}</div>
       </div>
     </div>
   );

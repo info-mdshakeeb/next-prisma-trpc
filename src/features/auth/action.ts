@@ -3,9 +3,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { IProfileUpdateForm } from "../profile/profile-form";
 
 const LoginSchema = z.object({
-  email: z.string().email("Please provide a valid email"),
+  email: z.email("Please provide a valid email"),
   password: z.string().min(1, "Password is required"),
   callback: z.union([z.string(), z.array(z.string())]).optional(),
 });
@@ -70,18 +71,12 @@ export async function logoutAction() {
   }
 }
 
-export async function updateUserAction(data: { name: string; phone?: string }) {
-  console.log(data)
+export async function updateUserAction(data: Partial<IProfileUpdateForm>) {
   try {
     await auth.api.updateUser({
       headers: await headers(),
-      body: {
-        name: data.name,
-        phone: data.phone,
-      },
-    },
-
-    );
+      body: data,
+    })
     return {
       ok: true,
     };

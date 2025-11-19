@@ -155,8 +155,6 @@ export default function AuthProvider({
   };
   const loadingState = getLoadingState();
 
-  console.log(error);
-
   return (
     <AuthContext.Provider value={value}>
       <AnimatePresence mode="wait">
