@@ -83,7 +83,7 @@ export function ProfileDropdown() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/">
+              <Link href="/settings">
                 Settings
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </Link>

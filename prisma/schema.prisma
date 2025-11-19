@@ -25,6 +25,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   role          UserRole  @default(USER)
+
   phone String?
 
   @@unique([email])

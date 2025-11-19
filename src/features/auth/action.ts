@@ -69,3 +69,30 @@ export async function logoutAction() {
     };
   }
 }
+
+export async function updateUserAction(data: { name: string; phone?: string }) {
+  console.log(data)
+  try {
+    await auth.api.updateUser({
+      headers: await headers(),
+      body: {
+        name: data.name,
+        phone: data.phone,
+      },
+    },
+
+    );
+    return {
+      ok: true,
+    };
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to update user right now. Please try again.";
+    return {
+      ok: false,
+      message,
+    };
+  }
+}

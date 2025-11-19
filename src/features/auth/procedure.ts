@@ -7,12 +7,13 @@ export const authRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
+        phone: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { name } = input;
+      const { name, phone } = input;
       return await auth.api.updateUser({
-        body: { name }
+        body: { name, phone },
       });
     }),
 });

@@ -11,6 +11,7 @@ import { loginAction, logoutAction } from "@/features/auth/action";
 import { AuthEvent, useCrossTabBus } from "@/hooks/use-cross-tab-bus";
 import { ISession, IUser } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
+import { SessionQueryParams } from "better-auth";
 import { SVGLoader } from "../loader/svg-loader";
 
 interface AuthContextValue {
@@ -22,6 +23,13 @@ interface AuthContextValue {
     data: { email: string; password: string };
     callback?: string | string[] | undefined;
   }) => Promise<void>;
+  refetch: (
+    queryParams?:
+      | {
+          query?: SessionQueryParams | undefined;
+        }
+      | undefined
+  ) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -35,7 +43,12 @@ export default function AuthProvider({
 
   const tabIdRef = React.useRef<string>(uuidv4());
   const [isPending, startTransition] = React.useTransition();
-  const { data, isPending: authLoading, refetch } = authClient.useSession();
+  const {
+    data,
+    isPending: authLoading,
+    refetch,
+    error,
+  } = authClient.useSession();
 
   const [actionMessage, setActionMessage] = React.useState<string>("");
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
@@ -131,6 +144,7 @@ export default function AuthProvider({
     authLoading,
     logout,
     login,
+    refetch,
   };
 
   const getLoadingState = () => {
@@ -140,6 +154,8 @@ export default function AuthProvider({
     return { show: false, message: "" };
   };
   const loadingState = getLoadingState();
+
+  console.log(error);
 
   return (
     <AuthContext.Provider value={value}>

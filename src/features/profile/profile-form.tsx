@@ -2,25 +2,25 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useAuth } from "@/components/providers/auth-provider";
 import { removeNullableValues } from "@/lib/remove-nullable-values";
+import { toast } from "sonner";
+import { updateUserAction } from "../auth/action";
 
 const profileFormSchema = z.object({
   name: z
@@ -29,7 +29,7 @@ const profileFormSchema = z.object({
     .max(60, { message: "First name must not be longer than 30 characters." }),
   username: z.string().optional(),
   email: z.email().optional(),
-  phone_number: z.string().min(1, "Phone number is required"),
+  phone_number: z.string().optional(),
   photo: z.string().optional(),
 });
 
@@ -39,8 +39,7 @@ export type IProfileUpdateFormServer = Partial<
 >;
 
 export function ProfileForm() {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { user, refetch } = useAuth();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<IProfileUpdateForm>({
@@ -56,101 +55,153 @@ export function ProfileForm() {
   });
 
   const onSubmit = async (data: IProfileUpdateForm) => {
+    const { email, username, photo, name, phone_number } = data;
     const sanitized = removeNullableValues(data);
+    console.log(data);
+    startTransition(async () => {
+      const result = await updateUserAction({ name, phone: phone_number });
+      console.log("Profile update result:", result);
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
+      toast.success("Profile updated successfully!");
+      refetch();
+    });
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <fieldset className="space-y-8" disabled={isPending}>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <fieldset className="space-y-8" disabled={isPending}>
+        <FieldGroup>
           {/* Profile Picture */}
-          <FormField
+          <Controller
             control={form.control}
             name="photo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile Picture</FormLabel>
-                <FormControl>
-                  <Input type="file" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Profile Picture</FieldLabel>
+                <Input
+                  id={field.name}
+                  type="file"
+                  // react-hook-form with file input usually handled via onChange
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    field.onChange(file ? file.name : "");
+                  }}
+                />
+                {fieldState.invalid && fieldState.error ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : (
+                  <FieldDescription>
+                    Upload an image to use as your profile avatar.
+                  </FieldDescription>
+                )}
+              </Field>
             )}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Name Field */}
-            <FormField
+          {/* Name & Username */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Controller
               control={form.control}
               name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel required htmlFor={field.name}>
+                    Name
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    placeholder="Name"
+                    {...field}
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && fieldState.error ? (
+                    <FieldError errors={[fieldState.error]} />
+                  ) : (
+                    <FieldDescription>
+                      Your name will be displayed publicly.
+                    </FieldDescription>
+                  )}
+                </Field>
               )}
             />
 
-            {/* Username Field (disabled) */}
-            <FormField
+            <Controller
               control={form.control}
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>User Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="User Name" {...field} disabled />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>User Name</FieldLabel>
+                  <Input
+                    id={field.name}
+                    placeholder="User Name"
+                    {...field}
+                    disabled
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
           </div>
-          <FormDescription>
-            Your name will be displayed publicly. You can change this any time.
-          </FormDescription>
 
-          {/* Email Field (disabled) */}
-          <FormField
+          {/* Email (disabled) */}
+          <Controller
             control={form.control}
             name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email" {...field} disabled />
-                </FormControl>
-                <FormDescription>
-                  You cannot change your email address.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <Input
+                  id={field.name}
+                  placeholder="Email"
+                  {...field}
+                  disabled
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && fieldState.error ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : (
+                  <FieldDescription>
+                    You cannot change your email address.
+                  </FieldDescription>
+                )}
+              </Field>
             )}
           />
 
-          {/* Mobile Number Field */}
-          <FormField
+          {/* Mobile Number */}
+          <Controller
             control={form.control}
             name="phone_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="01*********" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Your mobile number is used for account recovery and security.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel required htmlFor={field.name}>
+                  Mobile Number
+                </FieldLabel>
+                <Input
+                  id={field.name}
+                  placeholder="01*********"
+                  {...field}
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && fieldState.error ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : (
+                  <FieldDescription>
+                    Used for account recovery and security.
+                  </FieldDescription>
+                )}
+              </Field>
             )}
           />
 
           {/* Submit Button */}
-          <div>
+          <Field>
             <Button
               type="submit"
               size="sm"
@@ -158,17 +209,16 @@ export function ProfileForm() {
               disabled={isPending}
             >
               {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing
-                </>
+                <FieldContent className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </FieldContent>
               ) : (
                 "Update Profile"
               )}
             </Button>
-          </div>
-        </fieldset>
-      </form>
-    </Form>
+          </Field>
+        </FieldGroup>
+      </fieldset>
+    </form>
   );
 }
