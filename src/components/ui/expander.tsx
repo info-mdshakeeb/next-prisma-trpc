@@ -111,10 +111,9 @@ const CardProvider: React.FC<CardContainerProps> = ({
       <MotionConfig
         transition={
           transition ?? {
-            type: "spring",
-            stiffness: 260,
-            damping: 26,
-            mass: 0.9,
+            type: "tween",
+            duration: 0.26,
+            ease: [0.33, 1, 0.68, 1],
           }
         }
       >
@@ -149,7 +148,6 @@ const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
     <motion.div
       data-slot="card-body"
       layoutId={`card-container-${cardId}`}
-      layout
       className={cn(
         "relative flex flex-col overflow-hidden bg-background",
         "cursor-pointer select-none",
@@ -163,8 +161,8 @@ const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
         willChange: "transform, opacity",
         transform: "translateZ(0)",
       }}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{ scale: 1.005 }}
+      whileTap={{ scale: 0.995 }}
       {...props}
     >
       {children}
@@ -181,14 +179,12 @@ const Content: React.FC<ContentProps> = ({ children, className, ...props }) => {
       layoutId={`card-content-${cardId}`}
       className={cn("overflow-hidden", className)}
       aria-modal="true"
-      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      initial={{ opacity: 0, y: 8, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 12, scale: 0.98 }}
+      exit={{ opacity: 0, y: 4, scale: 0.985 }}
       transition={{
-        type: "spring",
-        stiffness: 230,
-        damping: 24,
-        mass: 0.9,
+        duration: 0.26,
+        ease: [0.33, 1, 0.68, 1],
       }}
       style={{ willChange: "transform, opacity" }}
       aria-labelledby={`expandable-card-${cardId}-title`}
