@@ -9,7 +9,9 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
   },
+
   user: {
     additionalFields: {
       phone: {
@@ -19,7 +21,7 @@ export const auth = betterAuth({
       role: {
         required: false,
         defaultValue: "USER",
-        type: ["USER", "ADMIN"],
+        type: ["USER", "ADMIN", "SUPERADMIN"],
       },
     }
   },

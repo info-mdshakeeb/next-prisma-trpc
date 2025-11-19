@@ -37,7 +37,7 @@ const loginFormSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .max(128, "Password must be at most 128 characters"),
 });
-type ILoginFormValues = z.infer<typeof loginFormSchema>;
+export type ILoginFormValues = z.infer<typeof loginFormSchema>;
 
 export function LoginForm({
   className,

@@ -22,8 +22,9 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { registerAction } from "../action";
 
 const registerFormSchema = z.object({
   name: z
@@ -31,7 +32,6 @@ const registerFormSchema = z.object({
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must be at most 100 characters"),
   email: z
-    .string()
     .email("Invalid email address")
     .max(255, "Email must be at most 255 characters"),
   password: z
@@ -42,21 +42,16 @@ const registerFormSchema = z.object({
 
 export type IRegisterFormValues = z.infer<typeof registerFormSchema>;
 
-export function RegisterForm({
-  className,
-  callback,
-}: {
-  className?: string;
-  callback?: string;
-}) {
+export function RegisterForm({ className }: { className?: string }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<IRegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      name: "skb",
+      email: "shakeeb1.m360ict@gmail.com",
+      password: "11111111",
     },
   });
 
@@ -65,24 +60,13 @@ export function RegisterForm({
       id: "register",
     });
     startTransition(async () => {
-      await authClient.signUp.email(
-        {
-          ...data,
-          callbackURL: callback ?? "/",
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message, {
-              id: "register",
-            });
-          },
-          onSuccess() {
-            toast.success("Register successful!", {
-              id: "register",
-            });
-          },
-        }
-      );
+      const res = await registerAction(data);
+      if (!res.success) {
+        toast.error(res.message, { id: "register" });
+        return;
+      }
+      toast.success("Register successful!", { id: "register" });
+      router.push("/login");
     });
   }
 

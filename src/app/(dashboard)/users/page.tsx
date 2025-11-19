@@ -5,8 +5,10 @@ import {
   ProfileDropdown,
   Search,
 } from "@/components/layout";
+import { requireAuth } from "@/lib/auth-utils";
 
-export default function page() {
+export default async function page() {
+  await requireAuth();
   return (
     <>
       <Header fixed>

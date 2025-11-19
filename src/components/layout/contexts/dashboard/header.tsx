@@ -34,7 +34,7 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
         {" "}
         <div
           className={cn(
-            "flex items-center transition-all duration-500 ease-out will-change-transform motion-reduce:transition-none",
+            "flex items-center transition-all duration-100 ease-out will-change-transform motion-reduce:transition-none",
             state === "expanded"
               ? "md:max-w-0 md:opacity-0 md:-translate-y-1 md:scale-95 md:overflow-hidden md:pointer-events-none md:flex-0 md:basis-0"
               : "md:max-w-[16rem] md:opacity-100 md:translate-y-0 md:scale-100 md:flex-initial md:basis-auto"

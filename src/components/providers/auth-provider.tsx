@@ -153,7 +153,16 @@ export default function AuthProvider({
     }
     return { show: false, message: "" };
   };
+
   const loadingState = getLoadingState();
+
+  // const isUnauthorized = React.useMemo(() => error?.status === 401, [error]);
+  // React.useEffect(() => {
+  //   if (isUnauthorized) {
+  //     setActionMessage("Setting up your session...");
+  //     logout();
+  //   }
+  // }, [isUnauthorized]);
 
   return (
     <AuthContext.Provider value={value}>
@@ -189,7 +198,7 @@ function LoadingOverlay({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.3, opacity: 0 }}
           transition={{
-            duration: 0.7,
+            duration: 0.4,
             ease: [0.16, 1, 0.3, 1],
           }}
           className="fixed inset-0 z-99 flex items-center justify-center

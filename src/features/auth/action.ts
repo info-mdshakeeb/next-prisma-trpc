@@ -4,20 +4,14 @@ import { auth } from "@/lib/auth";
 
 import { actionWrapper } from "@/lib/utils";
 import { headers } from "next/headers";
-import { z } from "zod";
 import { IProfileUpdateForm } from "../profile/profile-form";
-
-const LoginSchema = z.object({
-  email: z.email("Please provide a valid email"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginInput = z.infer<typeof LoginSchema>;
+import { ILoginFormValues } from "./forms/login.form";
+import { IRegisterFormValues } from "./forms/register.form";
 
 
-export async function loginAction(input: LoginInput) {
+export async function loginAction(input: ILoginFormValues) {
   return actionWrapper(async () => {
-    const { email, password } = LoginSchema.parse(input);
+    const { email, password } = input;
     const res = await auth.api.signInEmail({
       body: { email, password },
       headers: await headers(),
@@ -32,6 +26,18 @@ export async function logoutAction() {
     await auth.api.signOut({
       headers: await headers(),
     });
+  });
+}
+
+// register action
+export async function registerAction(input: IRegisterFormValues) {
+  return actionWrapper(async () => {
+    const { name, email, password } = input;
+    const res = await auth.api.signUpEmail({
+      body: { name, email, password },
+      headers: await headers(),
+    });
+    return { user: res.user };
   });
 }
 // update user action
