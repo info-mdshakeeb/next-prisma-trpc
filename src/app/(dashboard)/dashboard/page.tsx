@@ -3,8 +3,9 @@ import {
   Main,
   ModeSwitcher,
   ProfileDropdown,
-  Search,
+  SearchExpand,
 } from "@/components/layout";
+
 import { requireAuth } from "@/lib/auth-utils";
 
 export default async function Page() {
@@ -12,7 +13,7 @@ export default async function Page() {
   return (
     <>
       <Header fixed>
-        <Search />
+        <SearchExpand />
         <div className="ms-auto flex items-center space-x-4">
           <ModeSwitcher />
           <ProfileDropdown />
@@ -22,6 +23,8 @@ export default async function Page() {
         <div className="h-screen ">
           <div className="flex w-full justify-between"></div>
         </div>
+
+        <ul className="flex max-w-2xl mx-auto w-full h-full gap-4 items-center justify-center"></ul>
         <div className="h-screen">
           <div className="flex w-full justify-between"></div>
         </div>

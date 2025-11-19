@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/client";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "../ui/sonner";
 import AuthProvider from "./auth-provider";
+import { SearchProvider } from "./search-provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -19,7 +20,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         <AuthProvider>
           <TRPCReactProvider>
-            {children}
+            <SearchProvider>{children}</SearchProvider>
             <Toaster />
           </TRPCReactProvider>
         </AuthProvider>

@@ -1,9 +1,11 @@
 "use client";
 
+import { CommandMenu } from "@/components/command-menu";
 import { Button } from "@/components/ui/button";
+import { Expander } from "@/components/ui/expander";
+
 import { cn } from "@/lib/utils";
 import { SearchCheckIcon } from "lucide-react";
-
 interface Props {
   className?: string;
   type?: React.HTMLInputTypeAttribute;
@@ -38,3 +40,18 @@ export function Search({ className = "" }: Props) {
     </Button>
   );
 }
+
+export const SearchExpand = () => {
+  return (
+    <Expander>
+      <Expander.Body className="w-fit">
+        <Search />
+      </Expander.Body>
+      <Expander.View>
+        <Expander.Content>
+          <CommandMenu />
+        </Expander.Content>
+      </Expander.View>
+    </Expander>
+  );
+};
