@@ -108,7 +108,18 @@ const CardProvider: React.FC<CardContainerProps> = ({
 
   return (
     <ExpanderContext.Provider value={contextValue}>
-      <MotionConfig transition={transition}>{children}</MotionConfig>
+      <MotionConfig
+        transition={
+          transition ?? {
+            type: "spring",
+            stiffness: 260,
+            damping: 26,
+            mass: 0.9,
+          }
+        }
+      >
+        {children}
+      </MotionConfig>
     </ExpanderContext.Provider>
   );
 };
@@ -123,11 +134,7 @@ const Expander: React.FC<CardContainerProps> & {
   Image: React.FC<ImageProps>;
   CloseButton: React.FC<CloseButtonProps>;
 } = ({ children, transition }) => {
-  return (
-    <CardProvider transition={transition}>
-      <MotionConfig transition={transition}>{children}</MotionConfig>
-    </CardProvider>
-  );
+  return <CardProvider transition={transition}>{children}</CardProvider>;
 };
 
 // Card Body Component
@@ -142,6 +149,7 @@ const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
     <motion.div
       data-slot="card-body"
       layoutId={`card-container-${cardId}`}
+      layout
       className={cn(
         "relative flex flex-col overflow-hidden bg-background",
         "cursor-pointer select-none",
@@ -155,6 +163,8 @@ const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
         willChange: "transform, opacity",
         transform: "translateZ(0)",
       }}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       {...props}
     >
       {children}
@@ -171,13 +181,14 @@ const Content: React.FC<ContentProps> = ({ children, className, ...props }) => {
       layoutId={`card-content-${cardId}`}
       className={cn("overflow-hidden", className)}
       aria-modal="true"
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 12, scale: 0.98 }}
       transition={{
-        ease: "easeIn",
-        duration: 0.3,
-        delay: 0.2,
+        type: "spring",
+        stiffness: 230,
+        damping: 24,
+        mass: 0.9,
       }}
       style={{ willChange: "transform, opacity" }}
       aria-labelledby={`expandable-card-${cardId}-title`}
@@ -214,17 +225,20 @@ const View: React.FC<ViewProps> = ({ children, className }) => {
           <motion.div
             data-slot="card-backdrop"
             key={`card-backdrop-${cardId}`}
-            className="fixed inset-0 h-full w-full bg-white/40 dark:bg-black/40 z-40"
+            className="fixed inset-0 z-50 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           />
 
-          <div className="fixed inset-0 z-50 flex items-center justify-center max-w-2xl mx-auto h-fit my-auto pointer-events-none  ">
+          <div className="fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 sm:max-w-lg">
             <Body
               ref={containerRef}
-              className={cn("pointer-events-auto w-full", className)}
+              className={cn(
+                "pointer-events-auto w-full rounded-lg shadow-xl",
+                className
+              )}
             >
               {children}
             </Body>
@@ -311,13 +325,13 @@ const CloseButton: React.FC<CloseButtonProps> = ({
       size="icon-sm"
       className={cn(
         "flex absolute top-2 right-2 items-center justify-center rounded-full pointer-events-auto",
-        "bg-background/50 hover:bg-background/70 text-foreground/60 cursor-pointer z-[60]",
+        "bg-background/60 hover:bg-background/80 text-foreground/70 cursor-pointer z-[60]",
         className
       )}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { delay: -0.2 } }}
-      transition={{ duration: 0.2, delay: 0.3 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       {...props}
     >
       {children ?? <XIcon />}
