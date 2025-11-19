@@ -93,7 +93,7 @@ export function ProfileForm() {
     startTransition(async () => {
       const result = await updateUserAction({ ...changes });
 
-      if (!result.ok) {
+      if (!result.success) {
         toast.error(result.message);
         return;
       }
@@ -155,7 +155,6 @@ export function ProfileForm() {
                       id={field.name}
                       placeholder="User Name"
                       {...field}
-                      disabled
                       aria-invalid={fieldState.invalid}
                     />
                     <InputGroupAddon>

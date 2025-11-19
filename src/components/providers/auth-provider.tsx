@@ -86,7 +86,7 @@ export default function AuthProvider({
     const res = await loginAction({
       ...data,
     });
-    if (!res.ok) {
+    if (!res.success) {
       toast.error(res.message, { id: "login" });
       return;
     }
@@ -123,7 +123,7 @@ export default function AuthProvider({
     setActionMessage("Finalizing logout...");
     startTransition(async () => {
       const res = await logoutAction();
-      if (!res.ok) {
+      if (!res.success) {
         toast.error(res.message);
         return;
       }
