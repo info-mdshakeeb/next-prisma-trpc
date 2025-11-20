@@ -1,10 +1,8 @@
 "use client";
 import { SearchCheckIcon } from "lucide-react";
 
-import { BorderTrail } from "@/components/border-trail";
 import { useSearch } from "@/components/providers/search-provider";
 import { Button } from "@/components/ui/button";
-import { TextShimmer } from "@/components/ui/text-shimmer";
 import { cn } from "@/lib/utils";
 
 const GlobalSearch = () => {
@@ -20,14 +18,7 @@ const GlobalSearch = () => {
     >
       <span className="hidden lg:inline-flex items-center">
         <SearchCheckIcon className="size-4 mr-1 text-muted-foreground" />
-
-        <span key={isPending ? "searching" : "search-here"}>
-          {isPending ? (
-            <TextShimmer duration={1.2}>Search Here...</TextShimmer>
-          ) : (
-            <div>Search Here...</div>
-          )}
-        </span>
+        <div>Search Here...</div>
       </span>
       <span className="inline-flex lg:hidden">Search...</span>
 
@@ -39,13 +30,6 @@ const GlobalSearch = () => {
           K
         </kbd>
       </div>
-
-      {isPending && (
-        <BorderTrail
-          className="bg-gradient-to-l from-blue-200 via-blue-500 to-blue-200 dark:from-blue-400 dark:via-blue-500 dark:to-blue-700"
-          size={45}
-        />
-      )}
     </Button>
   );
 };
