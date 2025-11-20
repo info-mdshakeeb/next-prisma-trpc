@@ -5,6 +5,7 @@ import { TextShimmer } from "../ui/text-shimmer";
 
 export default function ShimmerLoader({
   loading,
+  loaderText,
   text,
   className,
   ...props
@@ -12,11 +13,12 @@ export default function ShimmerLoader({
   VariantProps<typeof buttonVariants> & {
     loading: boolean;
     text: string;
+    loaderText?: string;
   }) {
   return (
     <Button data-slot="button" className={cn(className)} {...props}>
       {loading ? (
-        <TextShimmer duration={1.2}>{text}</TextShimmer>
+        <TextShimmer duration={1.2}>{loaderText ?? text}</TextShimmer>
       ) : (
         <div>{text}</div>
       )}

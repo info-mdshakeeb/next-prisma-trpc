@@ -1,10 +1,19 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  TransitionStartFunction,
+  useContext,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 
 import { CommandMenu } from "../command-menu";
 
 type SearchContextType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isPending: boolean;
+  startTransition: TransitionStartFunction;
 };
 
 const SearchContext = createContext<SearchContextType | null>(null);
@@ -15,6 +24,8 @@ type SearchProviderProps = {
 
 export function SearchProvider({ children }: SearchProviderProps) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -27,7 +38,9 @@ export function SearchProvider({ children }: SearchProviderProps) {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ open, setOpen }}>
+    <SearchContext.Provider
+      value={{ open, setOpen, isPending, startTransition }}
+    >
       {children}
       <CommandMenu />
     </SearchContext.Provider>

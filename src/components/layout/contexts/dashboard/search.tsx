@@ -1,23 +1,33 @@
 "use client";
 import { SearchCheckIcon } from "lucide-react";
 
+import { BorderTrail } from "@/components/border-trail";
 import { useSearch } from "@/components/providers/search-provider";
 import { Button } from "@/components/ui/button";
+import { TextShimmer } from "@/components/ui/text-shimmer";
 import { cn } from "@/lib/utils";
 
 const GlobalSearch = () => {
-  const { setOpen, open } = useSearch();
+  const { setOpen, open, isPending } = useSearch();
   return (
     <Button
+      disabled={isPending}
       onClick={() => setOpen(!open)}
       variant={"outline"}
       className={cn(
-        "text-muted-foreground relative h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit  md:w-56 "
+        "text-muted-foreground  h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit  md:w-56 relative"
       )}
     >
       <span className="hidden lg:inline-flex items-center">
         <SearchCheckIcon className="size-4 mr-1 text-muted-foreground" />
-        Search Here...
+
+        <span key={isPending ? "searching" : "search-here"}>
+          {isPending ? (
+            <TextShimmer duration={1.2}>Search Here...</TextShimmer>
+          ) : (
+            <div>Search Here...</div>
+          )}
+        </span>
       </span>
       <span className="inline-flex lg:hidden">Search...</span>
 
@@ -29,6 +39,13 @@ const GlobalSearch = () => {
           K
         </kbd>
       </div>
+
+      {isPending && (
+        <BorderTrail
+          className="bg-gradient-to-l from-blue-200 via-blue-500 to-blue-200 dark:from-blue-400 dark:via-blue-500 dark:to-blue-700"
+          size={45}
+        />
+      )}
     </Button>
   );
 };
