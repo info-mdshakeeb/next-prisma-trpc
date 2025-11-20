@@ -1,8 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { CommandMenu } from "../command-menu";
+import { Expander } from "../ui/expander";
 
 type SearchContextType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  triggerRef: React.RefObject<HTMLElement | null>;
 };
 
 const SearchContext = createContext<SearchContextType | null>(null);
@@ -12,6 +15,8 @@ type SearchProviderProps = {
 };
 
 export function SearchProvider({ children }: SearchProviderProps) {
+  const triggerRef = useRef<HTMLElement | null>(null);
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -26,8 +31,16 @@ export function SearchProvider({ children }: SearchProviderProps) {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ open, setOpen }}>
+    <SearchContext.Provider value={{ open, setOpen, triggerRef }}>
       {children}
+
+      <Expander open={open} onOpenChange={setOpen}>
+        <Expander.View>
+          <Expander.Content>
+            <CommandMenu />
+          </Expander.Content>
+        </Expander.View>
+      </Expander>
     </SearchContext.Provider>
   );
 }

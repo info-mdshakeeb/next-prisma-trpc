@@ -36,6 +36,8 @@ interface ExpanderContextType {
 interface CardContainerProps {
   children: React.ReactNode;
   transition?: Transition;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 interface BodyProps extends React.ComponentProps<typeof motion.div> {
@@ -87,14 +89,26 @@ const MotionButton = motion.create(Button);
 const CardProvider: React.FC<CardContainerProps> = ({
   children,
   transition,
+  open,
+  onOpenChange,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(false);
   const cardId = useId();
   const triggerRef = useRef<HTMLElement | null>(null);
+  const isControlled = typeof open === "boolean";
+  const isExpanded = isControlled ? !!open : uncontrolledExpanded;
 
-  const toggleExpansion = useCallback((expanded: boolean) => {
-    setIsExpanded(expanded);
-  }, []);
+  const toggleExpansion = useCallback(
+    (expanded: boolean) => {
+      if (!isControlled) {
+        setUncontrolledExpanded(expanded);
+      }
+      if (onOpenChange) {
+        onOpenChange(expanded);
+      }
+    },
+    [isControlled, onOpenChange]
+  );
 
   const contextValue = useMemo(
     () => ({
@@ -124,7 +138,9 @@ const CardProvider: React.FC<CardContainerProps> = ({
 };
 
 // Main Container
-const Expander: React.FC<CardContainerProps> & {
+const Expander: React.FC<
+  Omit<CardContainerProps, "children"> & React.PropsWithChildren
+> & {
   Body: React.FC<BodyProps>;
   Content: React.FC<ContentProps>;
   View: React.FC<ViewProps>;
@@ -132,10 +148,17 @@ const Expander: React.FC<CardContainerProps> & {
   Description: React.FC<DescriptionProps>;
   Image: React.FC<ImageProps>;
   CloseButton: React.FC<CloseButtonProps>;
-} = ({ children, transition }) => {
-  return <CardProvider transition={transition}>{children}</CardProvider>;
+} = ({ children, transition, open, onOpenChange }) => {
+  return (
+    <CardProvider
+      transition={transition}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
+      {children}
+    </CardProvider>
+  );
 };
-
 // Card Body Component
 const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
   const { isExpanded, toggleExpansion, cardId } = useCardContext();
