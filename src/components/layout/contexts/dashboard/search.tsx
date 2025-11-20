@@ -1,27 +1,18 @@
 "use client";
+import { SearchCheckIcon } from "lucide-react";
 
-import { CommandMenu } from "@/components/command-menu";
 import { useSearch } from "@/components/providers/search-provider";
 import { Button } from "@/components/ui/button";
-import { Expander } from "@/components/ui/expander";
-
 import { cn } from "@/lib/utils";
-import { SearchCheckIcon } from "lucide-react";
-interface Props {
-  className?: string;
-  type?: React.HTMLInputTypeAttribute;
-  placeholder?: string;
-}
 
-export function Search({ className = "" }: Props) {
+const GlobalSearch = () => {
   const { setOpen, open } = useSearch();
   return (
     <Button
       onClick={() => setOpen(!open)}
       variant={"outline"}
       className={cn(
-        "text-muted-foreground relative h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit  md:w-56 ",
-        className
+        "text-muted-foreground relative h-8  justify-start pl-2.5 font-normal shadow-none sm:pr-12 w-fit  md:w-56 "
       )}
     >
       <span className="hidden lg:inline-flex items-center">
@@ -40,20 +31,5 @@ export function Search({ className = "" }: Props) {
       </div>
     </Button>
   );
-}
-
-export const SearchExpand = () => {
-  const { setOpen, open } = useSearch();
-  return (
-    <Expander open={open} onOpenChange={setOpen}>
-      <Expander.Body className="w-fit">
-        <Search />
-      </Expander.Body>
-      <Expander.View>
-        <Expander.Content>
-          <CommandMenu />
-        </Expander.Content>
-      </Expander.View>
-    </Expander>
-  );
 };
+export { GlobalSearch };

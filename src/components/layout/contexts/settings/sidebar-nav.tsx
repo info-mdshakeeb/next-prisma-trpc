@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { cn } from "@/lib/utils";
+import { Route } from "next";
 import { sidebarNavItems } from "./sidebar-nav.data";
 
 export default function SidebarNav({
@@ -29,7 +30,7 @@ export default function SidebarNav({
   const handleSelect = (e: string) => {
     setVal(e);
     startTransition(() => {
-      navigate.push(e);
+      navigate.push(e as Route);
     });
   };
 
@@ -75,7 +76,7 @@ export default function SidebarNav({
           {sidebarNavItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href as Route}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
                 pathname === item.href &&

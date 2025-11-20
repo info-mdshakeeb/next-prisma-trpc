@@ -1,10 +1,8 @@
-"use client";
+import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
 
-import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
-
 import {
-  Command,
+  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -16,18 +14,24 @@ import {
 import { useSmoothTheme } from "@/hooks/use-smooth-theme";
 import { useRouter } from "next/navigation";
 import { sidebarData } from "./layout";
+import { useSearch } from "./providers/search-provider";
 import { ScrollArea } from "./ui/scroll-area";
 
 export function CommandMenu() {
+  const navigate = useRouter();
   const { setTheme } = useSmoothTheme();
-  const router = useRouter();
+  const { open, setOpen } = useSearch();
 
-  const runCommand = React.useCallback((command: () => unknown) => {
-    command();
-  }, []);
+  const runCommand = React.useCallback(
+    (command: () => unknown) => {
+      setOpen(false);
+      command();
+    },
+    [setOpen]
+  );
 
   return (
-    <Command className="[&_[cmdk-group-heading]]:text-muted-foreground **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+    <CommandDialog modal open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <ScrollArea type="hover" className="h-72 pe-1">
@@ -41,7 +45,7 @@ export function CommandMenu() {
                       key={`${navItem.url}-${i}`}
                       value={navItem.title}
                       onSelect={() => {
-                        runCommand(() => router.push(navItem.url! as any));
+                        runCommand(() => navigate.push(navItem.url! as any));
                       }}
                     >
                       <div className="flex size-4 items-center justify-center">
@@ -56,7 +60,7 @@ export function CommandMenu() {
                     key={`${navItem.title}-${subItem.url}-${i}`}
                     value={`${navItem.title}-${subItem.url}`}
                     onSelect={() => {
-                      runCommand(() => router.push(subItem.url as any));
+                      runCommand(() => navigate.push(subItem.url! as any));
                     }}
                   >
                     <div className="flex size-4 items-center justify-center">
@@ -84,6 +88,6 @@ export function CommandMenu() {
           </CommandGroup>
         </ScrollArea>
       </CommandList>
-    </Command>
+    </CommandDialog>
   );
 }

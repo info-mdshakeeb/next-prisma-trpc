@@ -1,11 +1,10 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
 import { CommandMenu } from "../command-menu";
-import { Expander } from "../ui/expander";
 
 type SearchContextType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  triggerRef: React.RefObject<HTMLElement | null>;
 };
 
 const SearchContext = createContext<SearchContextType | null>(null);
@@ -15,10 +14,7 @@ type SearchProviderProps = {
 };
 
 export function SearchProvider({ children }: SearchProviderProps) {
-  const triggerRef = useRef<HTMLElement | null>(null);
-
   const [open, setOpen] = useState(false);
-
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -31,26 +27,17 @@ export function SearchProvider({ children }: SearchProviderProps) {
   }, []);
 
   return (
-    <SearchContext.Provider value={{ open, setOpen, triggerRef }}>
+    <SearchContext.Provider value={{ open, setOpen }}>
       {children}
-
-      <Expander open={open} onOpenChange={setOpen}>
-        <Expander.View>
-          <Expander.Content>
-            <CommandMenu />
-          </Expander.Content>
-        </Expander.View>
-      </Expander>
+      <CommandMenu />
     </SearchContext.Provider>
   );
 }
 
 export const useSearch = () => {
   const searchContext = useContext(SearchContext);
-
   if (!searchContext) {
     throw new Error("useSearch has to be used within SearchProvider");
   }
-
   return searchContext;
 };

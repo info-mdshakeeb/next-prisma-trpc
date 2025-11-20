@@ -156,14 +156,6 @@ export default function AuthProvider({
 
   const loadingState = getLoadingState();
 
-  // const isUnauthorized = React.useMemo(() => error?.status === 401, [error]);
-  // React.useEffect(() => {
-  //   if (isUnauthorized) {
-  //     setActionMessage("Setting up your session...");
-  //     logout();
-  //   }
-  // }, [isUnauthorized]);
-
   return (
     <AuthContext.Provider value={value}>
       <AnimatePresence mode="wait">

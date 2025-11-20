@@ -1,6 +1,14 @@
 "use client";
 
+import { XIcon } from "lucide-react";
+import {
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  type Transition,
+} from "motion/react";
 import React, {
+  ComponentProps,
   createContext,
   useCallback,
   useContext,
@@ -12,67 +20,48 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { XIcon } from "lucide-react";
-import {
-  AnimatePresence,
-  MotionConfig,
-  motion,
-  type Transition,
-} from "motion/react";
-
 import { Button } from "@/components/ui/button";
-
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { cn } from "@/lib/utils";
+import { RemoveScroll } from "react-remove-scroll";
 
-// Types
-interface ExpanderContextType {
-  isExpanded: boolean;
-  cardId: string;
-  triggerRef: React.RefObject<HTMLElement | null>;
-  toggleExpansion: (expanded: boolean) => void;
+type TMotionDivProps = ComponentProps<typeof motion.div>;
+type TMotionImgProps = ComponentProps<typeof motion.img>;
+type TMotionButtonProps = ComponentProps<typeof motion.button>;
+type TMotionH2Props = ComponentProps<typeof motion.h2>;
+type TMotionH3Props = ComponentProps<typeof motion.h3>;
+export interface IViewProps {
+  children: React.ReactNode;
+  className?: string;
 }
 
-interface CardContainerProps {
+interface ICardContainerProps {
   children: React.ReactNode;
   transition?: Transition;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  modal?: boolean;
+}
+export type IExpander = React.FC<
+  Omit<ICardContainerProps, "children"> & React.PropsWithChildren
+> & {
+  Trigger: React.FC<TMotionDivProps & { underView?: boolean }>;
+  Content: React.FC<TMotionDivProps>;
+  View: React.FC<IViewProps>;
+  Title: React.FC<TMotionH2Props>;
+  Description: React.FC<TMotionH3Props>;
+  Image: React.FC<TMotionImgProps>;
+  CloseButton: React.FC<TMotionButtonProps>;
+};
+interface IExpanderContext {
+  isExpanded: boolean;
+  cardId: string;
+  toggleExpansion: (expanded: boolean) => void;
+  isControlled: boolean;
+  modal?: boolean;
 }
 
-interface BodyProps extends React.ComponentProps<typeof motion.div> {
-  children: React.ReactNode;
-  className?: string;
-}
-
-interface ContentProps extends React.ComponentProps<typeof motion.div> {
-  children: React.ReactNode;
-  className?: string;
-}
-
-interface ViewProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-interface TitleProps extends React.ComponentProps<typeof motion.h2> {
-  children: React.ReactNode;
-  className?: string;
-}
-
-interface DescriptionProps extends React.ComponentProps<typeof motion.h3> {
-  children: React.ReactNode;
-  className?: string;
-}
-
-interface ImageProps extends React.ComponentProps<typeof motion.img> {
-  className?: string;
-}
-
-interface CloseButtonProps extends React.ComponentProps<typeof motion.button> {}
-
-// Context
-const ExpanderContext = createContext<ExpanderContextType | null>(null);
+const ExpanderContext = createContext<IExpanderContext | null>(null);
 
 const useCardContext = () => {
   const context = useContext(ExpanderContext);
@@ -82,52 +71,58 @@ const useCardContext = () => {
   return context;
 };
 
-// Motion Components
+// Motion Button Wrapper
 const MotionButton = motion.create(Button);
 
-// Provider
-const CardProvider: React.FC<CardContainerProps> = ({
+const CardProvider: React.FC<ICardContainerProps> = ({
   children,
   transition,
   open,
   onOpenChange,
+  modal,
 }) => {
-  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(false);
-  const cardId = useId();
-  const triggerRef = useRef<HTMLElement | null>(null);
+  const [internalOpen, setInternalOpen] = useState(false);
+
   const isControlled = typeof open === "boolean";
-  const isExpanded = isControlled ? !!open : uncontrolledExpanded;
+  const isExpanded = isControlled ? !!open : internalOpen;
+
+  const cardId = useId();
 
   const toggleExpansion = useCallback(
     (expanded: boolean) => {
-      if (!isControlled) {
-        setUncontrolledExpanded(expanded);
-      }
-      if (onOpenChange) {
-        onOpenChange(expanded);
-      }
+      if (!isControlled) setInternalOpen(expanded);
+      onOpenChange?.(expanded);
     },
     [isControlled, onOpenChange]
   );
 
-  const contextValue = useMemo(
-    () => ({
-      isExpanded,
-      cardId,
-      triggerRef,
-      toggleExpansion,
-    }),
-    [isExpanded, cardId, toggleExpansion]
+  const ctxValue = useMemo(
+    () => ({ isExpanded, cardId, toggleExpansion, isControlled, modal }),
+    [isExpanded, cardId, toggleExpansion, isControlled, modal]
   );
 
+  useEffect(() => {
+    if (!isControlled || !isExpanded) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        toggleExpansion(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isControlled, isExpanded, toggleExpansion]);
+
   return (
-    <ExpanderContext.Provider value={contextValue}>
+    <ExpanderContext.Provider value={ctxValue}>
       <MotionConfig
         transition={
           transition ?? {
             type: "tween",
-            duration: 0.26,
-            ease: [0.33, 1, 0.68, 1],
+            duration: 0.28,
+            ease: [0.22, 0.61, 0.36, 1],
           }
         }
       >
@@ -137,55 +132,55 @@ const CardProvider: React.FC<CardContainerProps> = ({
   );
 };
 
-// Main Container
-const Expander: React.FC<
-  Omit<CardContainerProps, "children"> & React.PropsWithChildren
-> & {
-  Body: React.FC<BodyProps>;
-  Content: React.FC<ContentProps>;
-  View: React.FC<ViewProps>;
-  Title: React.FC<TitleProps>;
-  Description: React.FC<DescriptionProps>;
-  Image: React.FC<ImageProps>;
-  CloseButton: React.FC<CloseButtonProps>;
-} = ({ children, transition, open, onOpenChange }) => {
+const Expander: IExpander = ({
+  children,
+  transition,
+  open,
+  onOpenChange,
+  modal,
+}) => {
   return (
     <CardProvider
       transition={transition}
       open={open}
       onOpenChange={onOpenChange}
+      modal={modal}
     >
       {children}
     </CardProvider>
   );
 };
-// Card Body Component
-const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
-  const { isExpanded, toggleExpansion, cardId } = useCardContext();
 
-  const handleExpand = useCallback(() => {
-    toggleExpansion(true);
-  }, [toggleExpansion]);
+const Trigger: React.FC<
+  TMotionDivProps & {
+    underView?: boolean;
+  }
+> = ({ children, className, underView = false, ...props }) => {
+  const { cardId, toggleExpansion, isExpanded, isControlled } =
+    useCardContext();
 
   return (
     <motion.div
-      data-slot="card-body"
+      data-slot="card-trigger"
       layoutId={`card-container-${cardId}`}
       className={cn(
-        "relative flex flex-col overflow-hidden bg-background",
-        "cursor-pointer select-none",
+        "relative flex flex-col overflow-hidden bg-background cursor-pointer select-none",
+
         className
       )}
-      onClick={handleExpand}
-      aria-haspopup="dialog"
+      onClick={() =>
+        isControlled || underView ? null : toggleExpansion(!isExpanded)
+      }
       aria-expanded={isExpanded}
+      aria-haspopup="dialog"
       aria-controls={`expandable-card-${cardId}`}
+      // whileHover={{ scale: 1.005 }}
+      // whileTap={{ scale: 0.995 }}
       style={{
         willChange: "transform, opacity",
         transform: "translateZ(0)",
       }}
-      whileHover={{ scale: 1.005 }}
-      whileTap={{ scale: 0.995 }}
+      tabIndex={0}
       {...props}
     >
       {children}
@@ -193,22 +188,22 @@ const Body: React.FC<BodyProps> = ({ children, className, ...props }) => {
   );
 };
 
-// Card Content Component
-const Content: React.FC<ContentProps> = ({ children, className, ...props }) => {
+const Content: React.FC<TMotionDivProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   const { cardId } = useCardContext();
 
   return (
     <motion.div
       layoutId={`card-content-${cardId}`}
-      className={cn("overflow-hidden", className)}
       aria-modal="true"
-      initial={{ opacity: 0, y: 8, scale: 0.985 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 4, scale: 0.985 }}
-      transition={{
-        duration: 0.26,
-        ease: [0.33, 1, 0.68, 1],
-      }}
+      className={cn("overflow-hidden", className)}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 6 }}
+      transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
       style={{ willChange: "transform, opacity" }}
       aria-labelledby={`expandable-card-${cardId}-title`}
       aria-describedby={`expandable-card-${cardId}-description`}
@@ -219,49 +214,92 @@ const Content: React.FC<ContentProps> = ({ children, className, ...props }) => {
   );
 };
 
-const View: React.FC<ViewProps> = ({ children, className }) => {
-  const { isExpanded, cardId, toggleExpansion } = useCardContext();
-  const [isMounted, setIsMounted] = useState(false);
+const View: React.FC<IViewProps> = ({ children, className }) => {
+  const { isExpanded, cardId, toggleExpansion, modal } = useCardContext();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useOutsideClick(containerRef, () => {
-    toggleExpansion(false);
-  });
+  useOutsideClick(containerRef, () => !modal && toggleExpansion(false));
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const animationFrame = requestAnimationFrame(() => {
-      setIsMounted(true);
-    });
-    return () => cancelAnimationFrame(animationFrame);
+    const raf = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(raf);
   }, []);
 
-  if (!isMounted) return null;
+  // Autofocus inside portal when it opens
+  useEffect(() => {
+    if (!isExpanded) return;
+    const raf = requestAnimationFrame(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const focusable = container.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      (focusable ?? container).focus();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [isExpanded]);
+
+  // Simple focus trap: keep Tab inside container
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab" || !containerRef.current) return;
+
+    const focusableEls = Array.from(
+      containerRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.hasAttribute("disabled"));
+
+    if (focusableEls.length === 0) {
+      e.preventDefault();
+      containerRef.current.focus();
+      return;
+    }
+
+    const first = focusableEls[0];
+    const last = focusableEls[focusableEls.length - 1];
+
+    if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    } else if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    }
+  };
+
+  if (!mounted) return null;
 
   return createPortal(
-    <AnimatePresence mode="sync">
+    <AnimatePresence mode="sync" initial={false}>
       {isExpanded && (
         <>
           <motion.div
-            data-slot="card-backdrop"
-            key={`card-backdrop-${cardId}`}
-            className="fixed inset-0 z-50 bg-black/50"
+            key={`backdrop-${cardId}`}
+            className="fixed inset-0 z-50 bg-background/60"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.4 }}
           />
 
-          <div className="fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 sm:max-w-lg">
-            <Body
-              ref={containerRef}
-              className={cn(
-                "pointer-events-auto w-full rounded-lg shadow-xl",
-                className
-              )}
+          <RemoveScroll enabled>
+            <div
+              className="fixed top-1/2 left-1/2 z-50 w-auto max-w-[calc(100%-2rem)] sm:max-w-lg -translate-x-1/2 -translate-y-1/2"
+              onKeyDown={handleKeyDown}
             >
-              {children}
-            </Body>
-          </div>
+              <Expander.Trigger
+                underView
+                ref={containerRef}
+                tabIndex={-1}
+                className={cn("focus:outline-none", className)}
+              >
+                {children}
+              </Expander.Trigger>
+            </div>
+          </RemoveScroll>
         </>
       )}
     </AnimatePresence>,
@@ -269,16 +307,14 @@ const View: React.FC<ViewProps> = ({ children, className }) => {
   );
 };
 
-// Card Title Component
-const Title: React.FC<TitleProps> = ({ className, children, ...props }) => {
+const Title: React.FC<TMotionH2Props> = ({ children, className, ...props }) => {
   const { cardId } = useCardContext();
-
   return (
     <motion.h2
       layout="position"
       layoutId={`card-title-${cardId}`}
       className={cn(
-        "text-lg font-semibold leading-6 tracking-tight p-0 px-4 !m-0 !mt-2",
+        "text-lg font-semibold tracking-tight px-4 mt-2",
         className
       )}
       {...props}
@@ -288,14 +324,12 @@ const Title: React.FC<TitleProps> = ({ className, children, ...props }) => {
   );
 };
 
-// Card Description Component
-const Description: React.FC<DescriptionProps> = ({
-  className,
+const Description: React.FC<TMotionH3Props> = ({
   children,
+  className,
   ...props
 }) => {
   const { cardId } = useCardContext();
-
   return (
     <motion.h3
       id={`card-description-${cardId}`}
@@ -309,48 +343,38 @@ const Description: React.FC<DescriptionProps> = ({
   );
 };
 
-// Card Image Component
-const Image: React.FC<ImageProps> = ({ className, ...props }) => {
+const Image: React.FC<TMotionImgProps> = ({ className, ...props }) => {
   return (
     <motion.img
+      className={cn("w-full h-full object-cover object-top", className)}
       style={{ willChange: "transform,scale" }}
-      className={cn(
-        "w-full h-full object-cover object-top not-prose",
-        className
-      )}
       {...props}
     />
   );
 };
 
-// Close Button Component
-const CloseButton: React.FC<CloseButtonProps> = ({
+const CloseButton: React.FC<TMotionButtonProps> = ({
   className,
   children,
   ...props
 }) => {
   const { toggleExpansion, cardId } = useCardContext();
 
-  const handleClose = useCallback(() => {
-    toggleExpansion(false);
-  }, [toggleExpansion]);
-
   return (
     <MotionButton
       layout="position"
       layoutId={`card-close-button-${cardId}`}
-      onClick={handleClose}
+      onClick={() => toggleExpansion(false)}
       aria-label="Close"
       size="icon-sm"
       className={cn(
-        "flex absolute top-2 right-2 items-center justify-center rounded-full pointer-events-auto",
-        "bg-background/60 hover:bg-background/80 text-foreground/70 cursor-pointer z-[60]",
+        "absolute top-2 right-2 z-50 flex items-center justify-center rounded-full bg-background/60 hover:bg-background/80 text-foreground/70",
         className
       )}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      transition={{ duration: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
       {...props}
     >
       {children ?? <XIcon />}
@@ -358,17 +382,8 @@ const CloseButton: React.FC<CloseButtonProps> = ({
   );
 };
 
-// Display names
 Expander.displayName = "Expander";
-Body.displayName = "Body";
-Content.displayName = "Content";
-View.displayName = "View";
-Title.displayName = "Title";
-Description.displayName = "Description";
-Image.displayName = "Image";
-CloseButton.displayName = "CloseButton";
-
-Expander.Body = Body;
+Expander.Trigger = Trigger;
 Expander.Content = Content;
 Expander.View = View;
 Expander.Title = Title;

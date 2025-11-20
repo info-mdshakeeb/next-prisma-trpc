@@ -1,9 +1,9 @@
 import {
+  GlobalSearch,
   Header,
   Main,
   ModeSwitcher,
   ProfileDropdown,
-  Search,
 } from "@/components/layout";
 import { requireAuth } from "@/lib/auth-utils";
 
@@ -12,7 +12,7 @@ export default async function page() {
   return (
     <>
       <Header fixed>
-        <Search />
+        <GlobalSearch />
         <div className="ms-auto flex items-center space-x-4">
           <ModeSwitcher />
           <ProfileDropdown />

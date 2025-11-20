@@ -2,22 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updatedDiff } from "deep-object-diff";
-import {
-  InfoIcon,
-  Loader2,
-  MailIcon,
-  PhoneIcon,
-  User2Icon,
-} from "lucide-react";
-import { useEffect, useMemo, useTransition } from "react";
+import { InfoIcon, MailIcon, PhoneIcon, User2Icon } from "lucide-react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -25,6 +17,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
+import ShimmerLoader from "@/components/loader/shimmer-loader";
+import { SVGLoader } from "@/components/loader/svg-loader";
+import { Expander } from "@/components/ui/expander";
 import {
   InputGroup,
   InputGroupAddon,
@@ -62,6 +57,8 @@ export function ProfileForm() {
   const { user, refetch, authLoading } = useAuth();
   const [isPending, startTransition] = useTransition();
 
+  const [open, setOpen] = useState(false);
+
   const userData = useMemo(
     () => ({
       name: user?.name ?? "",
@@ -90,15 +87,17 @@ export function ProfileForm() {
       toast.error("No changes detected.");
       return;
     }
+    setOpen(true);
     startTransition(async () => {
       const result = await updateUserAction({ ...changes });
-
       if (!result.success) {
         toast.error(result.message);
+        setOpen(false);
         return;
       }
       toast.success("Profile updated successfully!");
       refetch();
+      setOpen(false);
     });
   };
 
@@ -301,15 +300,14 @@ export function ProfileForm() {
 
           {/* Submit Button */}
           <Field orientation={"horizontal"}>
-            <Button type="submit" size="sm" className="" disabled={isPending}>
-              {isPending ? (
-                <FieldContent className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                </FieldContent>
-              ) : (
-                "Update Profile"
-              )}
-            </Button>
+            <Expander open={open} onOpenChange={setOpen}>
+              <Expander.Trigger className="bg-transparent">
+                <ShimmerLoader loading={isPending} text="Update Profile" />
+              </Expander.Trigger>
+              <Expander.View className="bg-transparent space-y-4">
+                <SVGLoader size={40} />
+              </Expander.View>
+            </Expander>
           </Field>
         </FieldGroup>
       </fieldset>

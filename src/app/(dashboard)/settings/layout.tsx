@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
 import {
+  GlobalSearch,
   Header,
   Main,
   ModeSwitcher,
   ProfileDropdown,
-  Search,
   SidebarNav,
 } from "@/components/layout";
 import { Separator } from "@/components/ui/separator";
@@ -22,7 +22,7 @@ export default async function layout({ children }: SettingsLayoutProps) {
   return (
     <>
       <Header>
-        <Search />
+        <GlobalSearch />
         <div className="ms-auto flex items-center space-x-4">
           <ModeSwitcher />
 
