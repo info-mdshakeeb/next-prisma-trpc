@@ -109,7 +109,11 @@ export default function AuthProvider({
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       startTransition(() => {
-        router.push(callback ? (callback as Route) : "/dashboard");
+        router.replace(
+          callback
+            ? (decodeURIComponent(callback as string) as Route)
+            : "/dashboard"
+        );
       });
     } catch (_err) {
     } finally {
