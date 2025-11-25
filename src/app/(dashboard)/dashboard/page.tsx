@@ -6,10 +6,8 @@ import {
   ProfileDropdown,
 } from "@/components/layout";
 
-import { requireAuth } from "@/lib/auth-utils";
-
 export default async function Page() {
-  await requireAuth();
+  // await requireAuth();
   return (
     <>
       <Header>

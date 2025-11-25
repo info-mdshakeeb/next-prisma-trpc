@@ -17,7 +17,7 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
       className={cn(
         "z-50 h-16",
         fixed &&
-          "header-fixed peer/header sticky top-0 w-[inherit] border-b border-border",
+          "header-fixed peer/header sticky top-0 w-[inherit] backdrop-blur-3xl bg-background/95 ",
 
         className
       )}
