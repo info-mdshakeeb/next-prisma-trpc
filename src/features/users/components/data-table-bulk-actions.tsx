@@ -1,3 +1,4 @@
+"use client";
 import { type Table } from "@tanstack/react-table";
 import { Mail, Trash2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";

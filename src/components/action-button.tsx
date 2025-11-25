@@ -25,6 +25,9 @@ const ActionButton = ({
   popupContent,
   popupTitle,
   onConfirm,
+  open,
+  onOpenChange,
+  hideTrigger,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -34,6 +37,9 @@ const ActionButton = ({
       message?: string;
       success?: boolean;
     }>;
+    open?: boolean;
+    hideTrigger?: boolean;
+    onOpenChange?: (open: boolean) => void;
   }) => {
   const [isLoading, startLoading] = useTransition();
 
@@ -42,14 +48,24 @@ const ActionButton = ({
       const data = await onConfirm();
       if (!data.success) toast.error(data.message ?? "Something went wrong");
       else toast.success(data.message ?? "Action successful");
+
+      // Close dialog after action if controlled
+      if (onOpenChange) {
+        onOpenChange(false);
+      }
     });
   };
 
   return (
-    <AlertDialog open={isLoading ? true : undefined}>
-      <AlertDialogTrigger asChild>
-        <Button {...props}>{children}</Button>
-      </AlertDialogTrigger>
+    <AlertDialog
+      open={open ?? (isLoading ? true : undefined)}
+      onOpenChange={onOpenChange}
+    >
+      {!hideTrigger && (
+        <AlertDialogTrigger asChild>
+          <Button {...props}>{children}</Button>
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{popupTitle}</AlertDialogTitle>
@@ -58,7 +74,13 @@ const ActionButton = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            onClick={() => {
+              if (onOpenChange) onOpenChange(false);
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction disabled={isLoading} onClick={handleConfirm}>
             {isLoading ? <TextShimmer>Confirm</TextShimmer> : "Confirm"}
           </AlertDialogAction>

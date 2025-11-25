@@ -28,6 +28,9 @@ export function UsersMultiDeleteDialog<TData>({
 
   return (
     <ActionButton
+      open={_open}
+      onOpenChange={onOpenChange}
+      hideTrigger
       variant="destructive"
       popupTitle={
         <span className="text-destructive">
@@ -81,8 +84,6 @@ export function UsersMultiDeleteDialog<TData>({
           }`,
         };
       }}
-    >
-      Delete
-    </ActionButton>
+    />
   );
 }

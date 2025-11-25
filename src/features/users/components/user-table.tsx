@@ -25,7 +25,6 @@ import {
 import { useTableUrlState } from "@/hooks/use-table-url-state";
 import { cn } from "@/lib/utils";
 
-import { useNavigate } from "@/lib/use-navigate";
 import { roles } from "../user.const";
 import { TUserItem } from "../user.type";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
@@ -41,7 +40,22 @@ export function UsersTable({ data, search }: DataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const navigate = useNavigate();
+  const navigate = ({
+    search,
+    replace,
+  }: {
+    search:
+      | true
+      | Record<string, unknown>
+      | ((
+          prev: Record<string, unknown>
+        ) => Partial<Record<string, unknown>> | Record<string, unknown>);
+    replace?: boolean;
+  }) => {
+    // Implement your navigation logic here, e.g., using Next.js router
+    // This is a placeholder function
+    console.log("Navigate called with:", { search, replace });
+  };
 
   const {
     columnFilters,
@@ -56,7 +70,7 @@ export function UsersTable({ data, search }: DataTableProps) {
     globalFilter: { enabled: false },
     columnFilters: [
       { columnId: "username", searchKey: "username", type: "string" },
-      { columnId: "status", searchKey: "status", type: "array" },
+      // { columnId: "status", searchKey: "status", type: "array" },
       { columnId: "role", searchKey: "role", type: "array" },
     ],
   });
@@ -101,16 +115,16 @@ export function UsersTable({ data, search }: DataTableProps) {
         searchPlaceholder="Filter users..."
         searchKey="username"
         filters={[
-          {
-            columnId: "status",
-            title: "Status",
-            options: [
-              { label: "Active", value: "active" },
-              { label: "Inactive", value: "inactive" },
-              { label: "Invited", value: "invited" },
-              { label: "Suspended", value: "suspended" },
-            ],
-          },
+          // {
+          //   columnId: "status",
+          //   title: "Status",
+          //   options: [
+          //     { label: "Active", value: "active" },
+          //     { label: "Inactive", value: "inactive" },
+          //     { label: "Invited", value: "invited" },
+          //     { label: "Suspended", value: "suspended" },
+          //   ],
+          // },
           {
             columnId: "role",
             title: "Role",
