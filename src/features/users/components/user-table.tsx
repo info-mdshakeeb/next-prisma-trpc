@@ -1,205 +1,39 @@
 "use client";
-import {
-  type SortingState,
-  type VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useEffect, useState } from "react";
 
-import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useTableUrlState } from "@/hooks/use-table-url-state";
-import { cn } from "@/lib/utils";
-
-import { roles } from "../user.const";
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableToolbar } from "@/components/data-table/toolbar";
+import { useDataTable } from "@/hooks/use-data-table";
 import { TUserItem } from "../user.type";
-import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { usersColumns as columns } from "./users-columns";
+import { usersColumns } from "./users-columns";
 
 type DataTableProps = {
-  data: TUserItem[];
-  search: Record<string, unknown>;
+  res: {
+    data: TUserItem[];
+    total: number;
+    perPage: number;
+  };
 };
 
-export function UsersTable({ data, search }: DataTableProps) {
-  const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [sorting, setSorting] = useState<SortingState>([]);
-
-  const navigate = ({
-    search,
-    replace,
-  }: {
-    search:
-      | true
-      | Record<string, unknown>
-      | ((
-          prev: Record<string, unknown>
-        ) => Partial<Record<string, unknown>> | Record<string, unknown>);
-    replace?: boolean;
-  }) => {
-    // Implement your navigation logic here, e.g., using Next.js router
-    // This is a placeholder function
-    console.log("Navigate called with:", { search, replace });
-  };
-
-  const {
-    columnFilters,
-    onColumnFiltersChange,
-    pagination,
-    onPaginationChange,
-    ensurePageInRange,
-  } = useTableUrlState({
-    search,
-    navigate,
-    pagination: { defaultPage: 1, defaultPageSize: 10 },
-    globalFilter: { enabled: false },
-    columnFilters: [
-      { columnId: "username", searchKey: "username", type: "string" },
-      // { columnId: "status", searchKey: "status", type: "array" },
-      { columnId: "role", searchKey: "role", type: "array" },
-    ],
-  });
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      pagination,
-      rowSelection,
-      columnFilters,
-      columnVisibility,
+export function UsersTable({ res }: DataTableProps) {
+  const { table, shallow, debounceMs, throttleMs } = useDataTable({
+    data: res.data,
+    columns: usersColumns,
+    pageCount: Math.ceil(res.total / res.perPage),
+    initialState: {
+      columnPinning: { right: ["actions"] },
     },
-    enableRowSelection: true,
-    onPaginationChange,
-    onColumnFiltersChange,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
-    getPaginationRowModel: getPaginationRowModel(),
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    shallow: false,
+    clearOnDefault: true,
   });
-
-  useEffect(() => {
-    ensurePageInRange(table.getPageCount());
-  }, [table, ensurePageInRange]);
 
   return (
-    <div
-      className={cn(
-        'max-sm:has-[div[role="toolbar"]]:mb-16',
-        "flex flex-1 flex-col gap-4"
-      )}
-    >
-      <DataTableToolbar
+    <>
+      <DataTable
         table={table}
-        searchPlaceholder="Filter users..."
-        searchKey="username"
-        filters={[
-          // {
-          //   columnId: "status",
-          //   title: "Status",
-          //   options: [
-          //     { label: "Active", value: "active" },
-          //     { label: "Inactive", value: "inactive" },
-          //     { label: "Invited", value: "invited" },
-          //     { label: "Suspended", value: "suspended" },
-          //   ],
-          // },
-          {
-            columnId: "role",
-            title: "Role",
-            options: roles.map((role) => ({ ...role })),
-          },
-        ]}
-      />
-      <div className="overflow-hidden rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="group/row">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className={cn(
-                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
-                        header.column.columnDef.meta?.className,
-                        header.column.columnDef.meta?.thClassName
-                      )}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="group/row"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cn(
-                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
-                        cell.column.columnDef.meta?.className,
-                        cell.column.columnDef.meta?.tdClassName
-                      )}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <DataTablePagination table={table} className="mt-auto" />
-      <DataTableBulkActions table={table} />
-    </div>
+        // actionBar={<TasksTableActionBar table={table} />}
+      >
+        <DataTableToolbar table={table}></DataTableToolbar>
+      </DataTable>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import "./src/env.js";
 const nextConfig = {
   typedRoutes: true,
   allowedDevOrigins: ["10.10.220.31"],
-  reactCompiler: true,
+  // reactCompiler: true,
   images: {
     remotePatterns: [
       {

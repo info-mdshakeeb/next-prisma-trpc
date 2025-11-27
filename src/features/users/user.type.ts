@@ -1,3 +1,3 @@
 import { IUser } from "@/lib/auth";
 
-export type TUserItem = Partial<IUser>;
+export type TUserItem = Partial<IUser>

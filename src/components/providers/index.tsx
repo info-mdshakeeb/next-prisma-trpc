@@ -1,9 +1,11 @@
 "use client";
 
+import { ThemeProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import React from "react";
 
 import { TRPCReactProvider } from "@/trpc/client";
-import { ThemeProvider } from "next-themes";
+
 import { Toaster } from "../ui/sonner";
 import AuthProvider from "./auth-provider";
 import { SearchProvider } from "./search-provider";
@@ -20,7 +22,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         <AuthProvider>
           <TRPCReactProvider>
-            <SearchProvider>{children}</SearchProvider>
+            <SearchProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </SearchProvider>
             <Toaster />
           </TRPCReactProvider>
         </AuthProvider>

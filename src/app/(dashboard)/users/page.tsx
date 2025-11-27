@@ -8,9 +8,21 @@ import {
 import { UsersTable } from "@/features/users/components/user-table";
 import { UsersProvider } from "@/features/users/components/users-provider";
 import { users } from "@/features/users/data";
+import { searchParamsCache } from "@/lib/search-params";
 
 export default async function page(props: PageProps<"/users">) {
   const searchParams = await props.searchParams;
+  const search = searchParamsCache.parse(searchParams);
+
+  const res = {
+    data: users.slice(
+      (search.page - 1) * search.perPage,
+      search.page * search.perPage
+    ),
+    page: search.page,
+    total: users.length,
+    perPage: search.perPage,
+  };
 
   return (
     <UsersProvider>
@@ -33,7 +45,7 @@ export default async function page(props: PageProps<"/users">) {
           </div>
           {/* <UsersPrimaryButtons /> */}
         </div>
-        <UsersTable data={users} search={searchParams} />
+        <UsersTable res={res} />
       </Main>
 
       {/* <UsersDialogs /> */}
