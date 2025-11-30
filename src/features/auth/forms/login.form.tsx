@@ -2,13 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon } from "lucide-react";
-import { useTransition } from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import z from "zod";
 
 import { PasswordInput } from "@/components/forms/password-input";
+
+import { useAuth } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
   FieldContent,
@@ -23,16 +25,11 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 const loginFormSchema = z.object({
   email: z
-    .string()
     .email("Invalid email address")
     .max(255, "Email must be at most 255 characters"),
   password: z
@@ -40,16 +37,16 @@ const loginFormSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .max(128, "Password must be at most 128 characters"),
 });
-type ILoginFormValues = z.infer<typeof loginFormSchema>;
+export type ILoginFormValues = z.infer<typeof loginFormSchema>;
 
 export function LoginForm({
   className,
   callback,
 }: {
   className?: string;
-  callback?: string;
+  callback?: string | string[] | undefined;
 }) {
-  const [isPending, startTransition] = useTransition();
+  const { login } = useAuth();
 
   const form = useForm<ILoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -60,34 +57,12 @@ export function LoginForm({
   });
 
   async function onSubmit(data: ILoginFormValues) {
-    toast.loading("Logging in...", {
-      id: "login",
-    });
-    startTransition(async () => {
-      await authClient.signIn.email(
-        {
-          ...data,
-          callbackURL: callback ?? "/",
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message, {
-              id: "login",
-            });
-          },
-          onSuccess() {
-            toast.success("Login successful!", {
-              id: "login",
-            });
-          },
-        }
-      );
-    });
+    await login({ data, callback });
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className={cn("", className)}>
-      <fieldset disabled={isPending}>
+      <fieldset disabled={form.formState.isSubmitting}>
         <FieldGroup>
           <Controller
             name="email"

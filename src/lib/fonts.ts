@@ -2,15 +2,20 @@ import {
   Geist_Mono as FontMono,
   Geist as FontSans,
   Inter,
-} from "next/font/google"
+  Space_Grotesk as SpaceGrotesk,
+} from "next/font/google";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
+
+const spaceGrotesk = SpaceGrotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
 
 const fontSans = FontSans({
   subsets: ["latin"],
-  variable: "--font-sans",
-})
-
+  variable: "--font-geist-sans",
+});
 const fontMono = FontMono({
   subsets: ["latin"],
   variable: "--font-mono",
@@ -23,7 +28,8 @@ const fontInter = Inter({
 })
 
 export const fontVariables = cn(
+  spaceGrotesk.variable,
   fontSans.variable,
   fontMono.variable,
-  fontInter.variable
+  fontInter.variable,
 )

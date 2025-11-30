@@ -1,8 +1,9 @@
 import Link from "next/link";
 
-import Logo from "@/components/layout/core/logo";
+import { Logo } from "@/components/layout";
 import { FieldDescription } from "@/components/ui/field";
 import { LoginForm } from "@/features/auth/forms/login.form";
+import { requireUnAuth } from "@/lib/auth-utils";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,11 +11,10 @@ export const metadata: Metadata = {
   description: "Login to your account",
 };
 
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+export default async function page(props: PageProps<"/login">) {
+  await requireUnAuth();
 
-export default async function page(props: { searchParams: SearchParams }) {
-  const { callback } = (await props.searchParams) || {};
-  // await requireUnAuth();
+  const { callback } = await props.searchParams;
 
   return (
     <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
@@ -36,7 +36,7 @@ export default async function page(props: { searchParams: SearchParams }) {
         </div>
 
         {/* //! FORM */}
-        <LoginForm callback={callback as string} />
+        <LoginForm callback={callback} />
 
         <FieldDescription className="px-6 text-center">
           By clicking continue, you agree to our{" "}

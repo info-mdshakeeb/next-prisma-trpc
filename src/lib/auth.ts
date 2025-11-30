@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-
 import prisma from "./db";
 
 export const auth = betterAuth({
@@ -10,6 +9,21 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
+  },
+
+  user: {
+    additionalFields: {
+      phone: {
+        type: "string",
+        required: false
+      },
+      role: {
+        required: false,
+        defaultValue: "USER",
+        type: ["USER", "ADMIN", "SUPERADMIN"],
+      },
+    }
   },
   rateLimit: {
     enabled: true,
@@ -18,3 +32,8 @@ export const auth = betterAuth({
   },
   plugins: [nextCookies()]
 });
+
+
+export type IUser = typeof auth.$Infer.Session.user
+export type ISession = typeof auth.$Infer.Session.session
+export type IErrorCode = keyof typeof auth.$ERROR_CODES;

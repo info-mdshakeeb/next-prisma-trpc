@@ -1,7 +1,7 @@
+import { getSession } from '@/lib/auth-utils';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { cache } from 'react';
-
-import { getSession } from '@/lib/auth-utils';
+import superjson from 'superjson';
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -17,7 +17,7 @@ const t = initTRPC.create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
-  // transformer: superjson,
+  transformer: superjson,
 });
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;
