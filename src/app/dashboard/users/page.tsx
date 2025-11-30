@@ -1,0 +1,46 @@
+import {
+  GlobalSearch,
+  Header,
+  Main,
+  ModeSwitcher,
+  ProfileDropdown,
+} from "@/components/layout";
+import { UsersTable } from "@/features/users/components/user-table";
+import { UsersProvider } from "@/features/users/components/users-provider";
+import { authParamsLoader } from "@/features/users/server/params";
+import { prefetchUsers } from "@/features/users/server/prefetch";
+import { HydrateClient } from "@/trpc/server";
+
+export default async function page(props: PageProps<"/dashboard/users">) {
+  const params = await authParamsLoader(props.searchParams);
+  prefetchUsers(params);
+  return (
+    <HydrateClient>
+      <UsersProvider>
+        <Header fixed>
+          <GlobalSearch />
+          <div className="ms-auto flex items-center space-x-4">
+            <ModeSwitcher />
+            <ProfileDropdown />
+          </div>
+        </Header>
+
+        <Main className="flex flex-1 flex-col gap-4 sm:gap-6 pb-3">
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">User List</h2>
+              <p className="text-muted-foreground">
+                Manage your users and their roles here.
+              </p>
+            </div>
+            {/* <UsersPrimaryButtons /> */}
+          </div>
+
+          <UsersTable />
+        </Main>
+
+        {/* <UsersDialogs /> */}
+      </UsersProvider>
+    </HydrateClient>
+  );
+}

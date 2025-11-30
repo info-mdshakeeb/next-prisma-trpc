@@ -6,11 +6,20 @@ import { Button } from "@/components/ui/button";
 import { useMetaColor } from "@/hooks/use-meta-color";
 import { useSmoothTheme } from "@/hooks/use-smooth-theme";
 import { AnimatePresence, motion } from "motion/react";
+import { useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
 
 export function ModeSwitcher() {
   const { toggleTheme: smoothToggleTheme, theme } = useSmoothTheme();
-
   const { setMetaColor, metaColor } = useMetaColor();
+
+  // Returns true on client, false during SSR to prevent hydration mismatch
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
     smoothToggleTheme({
@@ -19,6 +28,18 @@ export function ModeSwitcher() {
     });
     setMetaColor(metaColor);
   };
+
+  if (!mounted) {
+    return (
+      <Button
+        size={"icon-sm"}
+        variant="outline"
+        className="group/toggle cursor-pointer"
+      >
+        <span className="h-4 w-4" />
+      </Button>
+    );
+  }
 
   return (
     <Button

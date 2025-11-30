@@ -4,7 +4,6 @@ import {
   GlobalSearch,
   Header,
   Main,
-  ModeSwitcher,
   ProfileDropdown,
   SidebarNav,
 } from "@/components/layout";
@@ -24,7 +23,7 @@ export default async function layout({ children }: SettingsLayoutProps) {
       <Header>
         <GlobalSearch />
         <div className="ms-auto flex items-center space-x-4">
-          <ModeSwitcher />
+          {/* <ModeSwitcher /> */}
 
           <ProfileDropdown />
         </div>

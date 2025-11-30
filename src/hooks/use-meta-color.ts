@@ -1,4 +1,4 @@
-import { META_THEME_COLORS } from "@/lib/config"
+import { META_THEME_COLORS } from "@/config/site-config"
 import * as React from "react"
 import { useSmoothTheme } from "./use-smooth-theme"
 

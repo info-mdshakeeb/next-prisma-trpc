@@ -19,11 +19,11 @@ import React, {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { RemoveScroll } from "react-remove-scroll";
 
 import { Button } from "@/components/ui/button";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { cn } from "@/lib/utils";
-import { RemoveScroll } from "react-remove-scroll";
 
 type TMotionDivProps = ComponentProps<typeof motion.div>;
 type TMotionImgProps = ComponentProps<typeof motion.img>;

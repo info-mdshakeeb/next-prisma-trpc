@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
+import { META_THEME_COLORS, siteConfig } from "@/config/site-config";
 import { env } from "@/env";
-import { META_THEME_COLORS, siteConfig } from "@/lib/config";
 import { fontVariables } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 

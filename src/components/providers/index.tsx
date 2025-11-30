@@ -22,9 +22,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         <AuthProvider>
           <TRPCReactProvider>
-            <SearchProvider>
-              <NuqsAdapter>{children}</NuqsAdapter>
-            </SearchProvider>
+            <NuqsAdapter>
+              <SearchProvider>{children}</SearchProvider>
+            </NuqsAdapter>
             <Toaster />
           </TRPCReactProvider>
         </AuthProvider>

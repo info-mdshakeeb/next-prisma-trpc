@@ -36,22 +36,23 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
     size: 40,
   },
   {
-    id: "username",
+    id: "search",
     accessorKey: "username",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
     cell: ({ row }) => (
-      <LongText className="max-w-36 ps-3">{row.getValue("username")}</LongText>
+      <LongText className="max-w-36 ps-3">{row.original.name}</LongText>
     ),
     meta: {
-      label: "username",
+      label: "search",
       placeholder: "Search titles...",
       variant: "text",
       icon: Text,
     },
     enableColumnFilter: true,
     enableHiding: false,
+    enableSorting: false,
   },
   {
     id: "fullName",
@@ -72,13 +73,14 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
     cell: ({ row }) => (
       <div className="w-fit ps-2 text-nowrap">{row.getValue("email")}</div>
     ),
+    enableSorting: false,
   },
   {
-    accessorKey: "phoneNumber",
+    accessorKey: "phone",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone Number" />
     ),
-    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
+    cell: ({ row }) => <div>{row.original.phone ?? "_"}</div>,
     enableSorting: false,
   },
   {

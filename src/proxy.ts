@@ -1,6 +1,5 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "./lib/auth-utils";
 
 const PUBLIC_AUTH_ROUTES = [
   "/login",
@@ -28,9 +27,7 @@ export async function proxy(request: NextRequest) {
   )
 
   // Get session
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const session = await getSession()
   const isLoggedIn = !!session;
 
   // Handle protected routes - user not logged in

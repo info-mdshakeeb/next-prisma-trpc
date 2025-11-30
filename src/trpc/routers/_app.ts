@@ -1,7 +1,8 @@
-import { authRouter } from '@/features/auth/procedure';
+import { userRouter } from '@/features/users/server/routs';
 import { createTRPCRouter } from '../init';
+
 export const appRouter = createTRPCRouter({
-  auth: authRouter,
+  users: userRouter,
 
 });
 // export type definition of API

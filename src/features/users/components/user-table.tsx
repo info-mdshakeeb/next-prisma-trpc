@@ -2,38 +2,28 @@
 
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/toolbar";
+
 import { useDataTable } from "@/hooks/use-data-table";
-import { TUserItem } from "../user.type";
+import { useSuspenseUsers } from "../hooks/use-users";
 import { usersColumns } from "./users-columns";
 
-type DataTableProps = {
-  res: {
-    data: TUserItem[];
-    total: number;
-    perPage: number;
-  };
-};
-
-export function UsersTable({ res }: DataTableProps) {
-  const { table, shallow, debounceMs, throttleMs } = useDataTable({
-    data: res.data,
+export function UsersTable() {
+  const { data } = useSuspenseUsers();
+  const { table } = useDataTable({
+    data: data?.items || [],
     columns: usersColumns,
-    pageCount: Math.ceil(res.total / res.perPage),
-    initialState: {
-      columnPinning: { right: ["actions"] },
-    },
-    shallow: false,
+    pageCount: data.totalPages,
     clearOnDefault: true,
+    shallow: false,
   });
 
   return (
-    <>
-      <DataTable
-        table={table}
-        // actionBar={<TasksTableActionBar table={table} />}
-      >
-        <DataTableToolbar table={table}></DataTableToolbar>
-      </DataTable>
-    </>
+    <DataTable
+      className="relative "
+      table={table}
+      // actionBar={<TasksTableActionBar table={table} />}
+    >
+      <DataTableToolbar table={table}></DataTableToolbar>
+    </DataTable>
   );
 }
