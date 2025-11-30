@@ -4,13 +4,13 @@ export const sidebarNavItems = [
   {
     title: "Profile",
     icon: UserRound,
-    href: "/settings",
+    href: "/dashboard/settings",
     module: "profile",
   },
   {
     title: "Account",
     icon: Wrench,
-    href: "/settings/account",
+    href: "/dashboard/settings/account",
     module: "account",
   },
 ];
