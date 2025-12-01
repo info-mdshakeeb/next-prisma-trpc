@@ -40,7 +40,7 @@ const PAGE_KEY = "page";
 const PER_PAGE_KEY = "perPage";
 const FILTERS_KEY = "filters";
 const DEBOUNCE_MS = 300;
-const THROTTLE_MS = 300;
+const THROTTLE_MS = 10;
 const ARRAY_SEPARATOR = ",";
 
 interface UseDataTableProps<TData>
