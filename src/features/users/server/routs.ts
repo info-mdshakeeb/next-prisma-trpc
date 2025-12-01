@@ -9,42 +9,41 @@ export const userRouter = {
     .input(
       z.object({
         page: z.number().default(PAGINATION.DEFAULT_PAGE),
-        pageSize: z.number()
+        perPage: z.number()
           .min(PAGINATION.MIN_PAGE_SIZE)
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PER_PAGE),
-
         search: z.string().trim().default(''),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, search } = input
-      const where =
-        search && search.length > 0
-          ? {
-            OR: [
-              { email: { contains: search, mode: 'insensitive' as const } },
-              { name: { contains: search, mode: 'insensitive' as const } },
-            ],
-          }
-          : undefined
+      const { page, perPage, search } = input
+
+      const where = {
+        ...(search && search.length > 0 && {
+          OR: [
+            { email: { contains: search, mode: 'insensitive' as const } },
+            { name: { contains: search, mode: 'insensitive' as const } },
+          ],
+        }),
+      }
 
       const [items, totalCount] = await Promise.all([
         prisma.user.findMany({
           where,
-          skip: (page - 1) * pageSize,
-          take: pageSize,
+          skip: (page - 1) * perPage,
+          take: perPage,
           orderBy: { createdAt: 'desc' },
         }),
         prisma.user.count({ where }),
       ])
 
-      const totalPages = Math.ceil(totalCount / pageSize);
+      const totalPages = Math.ceil(totalCount / perPage);
 
       return {
         items,
         page,
-        pageSize,
+        perPage,
         totalCount,
         totalPages,
       }

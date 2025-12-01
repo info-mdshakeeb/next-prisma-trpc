@@ -109,9 +109,9 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
     meta: {
       label: "Role",
       variant: "select",
-      options: ["USERS", "ADMIN", "SUPERADMIN"].map((priority) => ({
-        label: priority.charAt(0).toUpperCase() + priority.slice(1),
-        value: priority,
+      options: ["USER", "ADMIN", "SUPERADMIN"].map((role) => ({
+        label: role.charAt(0).toUpperCase() + role.slice(1).toLowerCase(),
+        value: role,
       })),
       icon: ArrowUpDown,
     },

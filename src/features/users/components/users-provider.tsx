@@ -25,10 +25,10 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     </UsersContext>
   );
 }
-export const useUsers = () => {
+export const useUsersContext = () => {
   const usersContext = React.useContext(UsersContext);
   if (!usersContext) {
-    throw new Error("useUsers has to be used within <UsersContext>");
+    throw new Error("useUsersContext has to be used within <UsersContext>");
   }
   return usersContext;
 };

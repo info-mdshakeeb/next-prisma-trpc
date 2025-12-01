@@ -2,11 +2,11 @@ import { PAGINATION } from "@/config/constants";
 import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 
 
-export const authParams = {
+export const usersParams = {
   page: parseAsInteger
     .withDefault(PAGINATION.DEFAULT_PAGE)
     .withOptions({ clearOnDefault: true }),
-  pageSize: parseAsInteger
+  perPage: parseAsInteger
     .withDefault(PAGINATION.DEFAULT_PER_PAGE)
     .withOptions({ clearOnDefault: true }),
   search: parseAsString
@@ -14,4 +14,4 @@ export const authParams = {
     .withOptions({ clearOnDefault: true }),
 }
 
-export const authParamsLoader = createLoader(authParams);
+export const usersParamsLoader = createLoader(usersParams);

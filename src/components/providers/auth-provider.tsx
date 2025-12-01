@@ -43,12 +43,7 @@ export default function AuthProvider({
 
   const tabIdRef = React.useRef<string>(uuidv4());
   const [isPending, startTransition] = React.useTransition();
-  const {
-    data,
-    isPending: authLoading,
-    refetch,
-    error,
-  } = authClient.useSession();
+  const { data, isPending: authLoading, refetch } = authClient.useSession();
 
   const [actionMessage, setActionMessage] = React.useState<string>("");
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
@@ -67,7 +62,13 @@ export default function AuthProvider({
         setActionMessage(messages[msg.type as keyof typeof messages]);
         startTransition(async () => {
           await new Promise((resolve) => setTimeout(resolve, 800));
-          router.refresh();
+          {
+            if (msg.type === "logout") {
+              router.replace("/");
+            } else {
+              router.replace("/dashboard");
+            }
+          }
         });
       }
     },
@@ -104,10 +105,6 @@ export default function AuthProvider({
       setActionMessage("Loading your preferences...");
       refetch();
       await new Promise((resolve) => setTimeout(resolve, 700));
-
-      setActionMessage("Almost there...");
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       startTransition(() => {
         router.replace(
           callback
@@ -125,21 +122,27 @@ export default function AuthProvider({
 
   const logout = async () => {
     setActionMessage("Finalizing logout...");
-    startTransition(async () => {
+    try {
       const res = await logoutAction();
       if (!res.success) {
         toast.error(res.message);
         return;
       }
+
       publish({
         id: uuidv4(),
         type: "logout",
         originTab: tabIdRef.current,
         ts: Date.now(),
       });
-      router.refresh();
-      setActionMessage("");
-    });
+      startTransition(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        router.replace("/login");
+        setActionMessage("");
+      });
+    } catch (_err) {
+      toast.error("An error occurred during logout.");
+    }
   };
 
   const value: AuthContextValue = {

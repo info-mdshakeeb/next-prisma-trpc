@@ -12,14 +12,14 @@ import { type Row } from "@tanstack/react-table";
 import { Trash2, UserPen } from "lucide-react";
 
 import { TUserItem } from "../user.type";
-import { useUsers } from "./users-provider";
+import { useUsersContext } from "./users-provider";
 
 type DataTableRowActionsProps = {
   row: Row<TUserItem>;
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useUsers();
+  const { setOpen, setCurrentRow } = useUsersContext();
   return (
     <>
       <DropdownMenu modal={false}>
