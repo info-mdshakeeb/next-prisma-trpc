@@ -25,7 +25,8 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
     >
       <div
         className={cn(
-          "relative flex h-full items-center gap-3 p-4 sm:gap-4",
+          "relative flex h-full items-center gap-3 py-4 sm:gap-4 pr-4",
+          state === "expanded" ? "" : "pl-4",
 
           fixed &&
             "after:bg-background after:absolute after:inset-0 after:-z-10 after:backdrop-blur-lg"
