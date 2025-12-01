@@ -48,16 +48,3 @@ export async function proxy(request: NextRequest) {
 
   return NextResponse.next()
 }
-
-export const config = {
-  runtime: "nodejs",
-  matcher: [
-    "/dashboard/:path*",
-    "/settings/:path*",
-    "/profile/:path*",
-    "/users/:path*",
-    "/login",
-    "/register",
-    "/forgot-password",
-  ],
-};
