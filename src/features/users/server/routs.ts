@@ -1,5 +1,5 @@
 import { PAGINATION } from '@/config/constants'
-import prisma from '@/lib/db'
+import { auth } from '@/lib/auth'
 import { protectedProcedure } from '@/trpc/init'
 import { TRPCRouterRecord } from '@trpc/server'
 import { z } from 'zod'
@@ -16,35 +16,31 @@ export const userRouter = {
         search: z.string().trim().default(''),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const { page, perPage, search } = input
 
-      const where = {
-        ...(search && search.length > 0 && {
-          OR: [
-            { email: { contains: search, mode: 'insensitive' as const } },
-            { name: { contains: search, mode: 'insensitive' as const } },
-          ],
-        }),
+      const { total, users } = await auth.api.listUsers({
+        query: {
+          limit: perPage,
+          searchValue: search || undefined,
+          offset: (page - 1) * perPage,
+          searchField: "email",
+          sortBy: "createdAt",
+          searchOperator: "contains"
+        },
+        headers: ctx.headers
       }
+      )
 
-      const [items, totalCount] = await Promise.all([
-        prisma.user.findMany({
-          where,
-          skip: (page - 1) * perPage,
-          take: perPage,
-          orderBy: { createdAt: 'desc' },
-        }),
-        prisma.user.count({ where }),
-      ])
 
-      const totalPages = Math.ceil(totalCount / perPage);
+
+      const totalPages = Math.ceil(total / perPage);
 
       return {
-        items,
+        items: users,
         page,
         perPage,
-        totalCount,
+        totalCount: total,
         totalPages,
       }
     }),

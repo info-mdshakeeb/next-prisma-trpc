@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 
+import { admin } from "better-auth/plugins/admin";
 import prisma from "./db";
 
 export const auth = betterAuth({
@@ -19,11 +20,6 @@ export const auth = betterAuth({
         type: "string",
         required: false
       },
-      role: {
-        required: false,
-        defaultValue: "USER",
-        type: ["USER", "ADMIN", "SUPERADMIN"],
-      },
     }
   },
   rateLimit: {
@@ -31,7 +27,12 @@ export const auth = betterAuth({
     window: 20,
     max: 100
   },
-  plugins: [nextCookies()]
+  plugins: [nextCookies(), admin({
+    defaultRole: "user",
+    adminRoles: ["admin"],
+  })
+
+  ]
 });
 
 

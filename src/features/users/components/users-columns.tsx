@@ -6,7 +6,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { ArrowUpDown, Text } from "lucide-react";
-import { roles } from "../user.const";
 import { TUserItem } from "../user.type";
 import { DataTableRowActions } from "./data-table-row-actions";
 
@@ -23,7 +22,6 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
         aria-label="Select all"
       />
     ),
-
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -37,16 +35,16 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
   },
   {
     id: "search",
-    accessorKey: "username",
+    accessorFn: (row) => row.name,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
     cell: ({ row }) => (
-      <LongText className="max-w-36 ps-3">{row.original.name}</LongText>
+      <LongText className="max-w-36 ps-3">{row.original.name ?? "-"}</LongText>
     ),
     meta: {
       label: "search",
-      placeholder: "Search titles...",
+      placeholder: "Search users...",
       variant: "text",
       icon: Text,
     },
@@ -56,31 +54,34 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
   },
   {
     id: "fullName",
+    accessorFn: (row) => row.name,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => {
-      const { name } = row.original;
-      return <LongText className="max-w-36">{name}</LongText>;
+      const name = row.original.name;
+      return <LongText className="max-w-36">{name ?? "-"}</LongText>;
     },
     meta: { className: "w-36" },
   },
   {
+    id: "email",
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => (
-      <div className="w-fit ps-2 text-nowrap">{row.getValue("email")}</div>
+      <div className="w-fit ps-2 text-nowrap">{row.original.email ?? "-"}</div>
     ),
     enableSorting: false,
   },
   {
+    id: "phone",
     accessorKey: "phone",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone Number" />
     ),
-    cell: ({ row }) => <div>{row.original.phone ?? "_"}</div>,
+    cell: ({ row }) => <div>{row.original.phone ?? "-"}</div>,
     enableSorting: false,
   },
   {
@@ -91,26 +92,17 @@ export const usersColumns: ColumnDef<TUserItem>[] = [
     ),
     cell: ({ row }) => {
       const { role } = row.original;
-      const userType = roles.find(({ value }) => value === role);
-
-      if (!userType) {
-        return null;
-      }
-
       return (
         <div className="flex items-center gap-x-2">
-          {userType.icon && (
-            <userType.icon size={16} className="text-muted-foreground" />
-          )}
-          <span className="text-sm capitalize">{row.getValue("role")}</span>
+          <span className="text-sm capitalize">{role ?? "user"}</span>
         </div>
       );
     },
     meta: {
       label: "Role",
       variant: "select",
-      options: ["USER", "ADMIN", "SUPERADMIN"].map((role) => ({
-        label: role.charAt(0).toUpperCase() + role.slice(1).toLowerCase(),
+      options: ["admin", "user"].map((role) => ({
+        label: role.charAt(0).toUpperCase() + role.slice(1),
         value: role,
       })),
       icon: ArrowUpDown,

@@ -1,11 +1,14 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useUsersParams } from "./use-users-params";
 
-export const useSuspenseUsers = () => {
+export const useUsers = () => {
   const trpc = useTRPC();
   const [params] = useUsersParams();
-  return useSuspenseQuery(trpc.users.all.queryOptions(params));
+  return useQuery({
+    ...trpc.users.all.queryOptions(params),
+    placeholderData: keepPreviousData,
+  });
 };

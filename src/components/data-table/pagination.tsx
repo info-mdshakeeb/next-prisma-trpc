@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 interface DataTablePaginationProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>;
@@ -28,7 +27,6 @@ export function DataTablePagination<TData>({
   className,
   ...props
 }: DataTablePaginationProps<TData>) {
-  const [open, setOpen] = useState(false);
   return (
     <div
       className={cn(
@@ -45,13 +43,8 @@ export function DataTablePagination<TData>({
         <div className="flex items-center space-x-2">
           <p className="whitespace-nowrap font-medium text-sm">Rows per page</p>
           <Select
-            open={open}
-            onOpenChange={setOpen}
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={async (value) => {
-              setOpen(false);
-              await new Promise((resolve) => setTimeout(resolve, 10));
-
+            onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >

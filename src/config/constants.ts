@@ -4,3 +4,8 @@ export const PAGINATION = {
   MIN_PAGE_SIZE: 1,
   MAX_PAGE_SIZE: 100,
 };
+
+export const ROLES = {
+  ADMIN: "admin",
+  USER: "user",
+};

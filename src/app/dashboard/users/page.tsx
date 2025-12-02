@@ -7,15 +7,10 @@ import {
 } from "@/components/layout";
 import { UsersTable } from "@/features/users/components/user-table";
 import { UsersProvider } from "@/features/users/components/users-provider";
-import { usersParamsLoader } from "@/features/users/server/params";
-import { prefetchUsers } from "@/features/users/server/prefetch";
-import { HydrateClient } from "@/trpc/server";
 
-export default async function page(props: PageProps<"/dashboard/users">) {
-  const params = await usersParamsLoader(props.searchParams);
-  void prefetchUsers(params);
+export default function page() {
   return (
-    <HydrateClient>
+    <>
       <UsersProvider>
         <Header fixed>
           <GlobalSearch />
@@ -40,6 +35,6 @@ export default async function page(props: PageProps<"/dashboard/users">) {
 
         {/* <UsersDialogs /> */}
       </UsersProvider>
-    </HydrateClient>
+    </>
   );
 }

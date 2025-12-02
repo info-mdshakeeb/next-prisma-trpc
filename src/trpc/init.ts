@@ -1,5 +1,6 @@
-import { getSession } from '@/lib/auth-utils';
+import { auth } from '@/lib/auth';
 import { initTRPC, TRPCError } from '@trpc/server';
+import { headers as NextHeaders } from 'next/headers';
 import { cache } from 'react';
 import superjson from 'superjson';
 
@@ -24,12 +25,15 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const session = await getSession()
+  const headers = await NextHeaders();
+  const session = await auth.api.getSession({
+    headers: headers
+  })
   if (!session) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You must be logged in to access this resource',
     })
   }
-  return next({ ctx: { ...ctx, auth: session } })
+  return next({ ctx: { ...ctx, auth: session, headers: headers } })
 })
